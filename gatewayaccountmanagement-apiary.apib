@@ -1,10 +1,18 @@
 FORMAT: 1A
-HOST: https://api.test.paysafe.com/
+HOST: https://api.test.paysafe.com/merchant/
 
 # Account Management
 
 The Paysafe Account Management API allows our Platform Partners to create their own white-labelled merchant on-boarding experience, via a set of REST-based calls. With this API, Platform Partners will be able to tailor their user experience to their business, using client information that they have already collected and verified.
 Once a merchant application has been received, Paysafe will quickly enable the merchant to accept payments using the payment method selected. The result of improved merchant experiences will be higher on-boarding conversion and increased processing volumes.
+
+# Prerequisites
+
+Below are the Prerequisites steps for merchant onboarding:
+
+1. Partner has to get in touch with the account manager to setup his account.
+2. Once the account is setup, the Partenr will get the Onboarding Config ID.
+3. Paysafe will also provide Partner with the API keys.
 
 <a name="apikey" title="Authentication"></a>
 # Authentication 
@@ -34,8 +42,191 @@ Click [here](https://developer.paysafe.com/en/rest-apis/platforms/account-manage
 
 # Testing Instructions
 
-The Paysafe Test environment can be used to test applications without actually running requests through the live system. It is important to make sure that your systems are working correctly before going into a Live environment. Click [here](https://developer.paysafe.com/en/rest-apis/platforms/account-management/test-and-go-live/) for details of using the Test environment.
+Test accounts enable you to process API transactions that mirror the functionality of the Production environment. 
+It is important to make sure that your systems are working correctly before going into a Live environment. 
 
+With the Accounts API, you can:
+
+* Verify support for all the operation types that you require.
+* Review all common errors as well as errors that may occur for each operation.
+* Verify the lengths and format for all attributes you send.
+
+For access to Test accounts and credentials, please contact your account manager or reach out to <integrations@paysafe.com>. 
+
+###  Test URL
+To test your integration with Paysafe, use the following Test URL:
+
+`https://api.test.paysafe.com/merchant/v1/`
+
+For example:
+
+`https://api.test.paysafe.com/merchant/v1/applications`
+
+Click [here](https://developer.paysafe.com/en/rest-apis/platforms/account-management/test-and-go-live/) for details of using the Test environment.
+
+# Going Live
+ 
+Once you are satisfied with your integration to the Test environment, you must repeat the configuration changes made to your Test account on your Production account.
+
+> **Note:** You cannot use your Test credentials to process transaction requests in the Production environment.
+
+### Go Live Checklist
+1. You must have a production account and an Onboarding Config ID for your production account.
+2. You must have the API Keys for the production environment.
+3. You must have Webhooks configured for all the events.
+4. You must use the Production URL for your API calls.
+
+### Production URL
+To process live requests with Paysafe, use the following Production URL:
+
+`https://api.paysafe.com/merchant/v1/`
+
+For example:
+
+`https://api.paysafe.com/merchant/v1/applications`
+
+<a name="webhooks" title="Webhooks"></a>
+# Webhooks
+
+A Webhook is an HTTP callback that is triggered when an event takes place. 
+
+> **Note:** To receive webhooks from Paysafe, you must create a callback URL to receive the webhook that is triggered. 
+You are responsible for ensuring its continued availability.
+
+## Webhooks Signature
+
+The webhook notification contains a signature header calculated using the following algorithm:
+
+```
+digest = HMAC_SHA256 (hmacKey, UTF 8 string containing the JSON webhook request body)
+
+signature = base 64 (digest)
+```
+
+The code receiving the webhook needs to repeat this algorithm and compare the value generated with the value received in the header.
+
+Example Header:
+
+```
+Signature: UMaQ4h635wUc4hp60Z5ASBC/5UtqKybAldOkLv6ngc0=
+```
+
+## Webhook Events
+
+Webhooks can be triggered for the following events: 
+
+**Event Type**: MOBE_APPLICATION_RECEIVED <br/>
+**Application Status**: Received <br/>
+**Description**: Submitted application has passed all the data validation tests and has been picked up for processing. <br/>
+**Sample Payload**
+```
+  {
+  "applicationId": "100000016",
+  "merchantRefNum": "1582866940938",
+  "eventType": "MOBE_APPLICATION_RECEIVED",
+  "eventData": {
+    "status": "RECEIVED",
+    "subStatus": null
+  },
+  "addendum": {}
+}
+```
+<br/>
+
+**Event Type**: MOBE_APPLICATION_IN_PROGRESS <br/>
+**Application Status**: In-Review <br/>
+**Description**: Invoked once case has been raised successfully for the specific application.  List of sub-status: <ul><li>Vendor Checks In-Progress</li><li>Waiting for CU Manual check</li><li>Processing for CU Manual check</li><li>Waiting for Ops Setup Manual check</li><li>Processing for Ops Setup Manual check</li><li>Waiting for Ops QA Manual check</li><li>Processing for Ops QA Manual check</li><li>Waiting for Sales Manual check</li><li>Processing for Sales Manual check</li><li>Referred for Merchant Docs</li><li>Returned to Partner</li></ul><br/>
+**Sample Payload**
+```
+  {
+  "applicationId": "100000016",
+  "merchantRefNum": "1582866940938",
+  "eventType": "MOBE_APPLICATION_IN_PROGRESS",
+  "eventData": {
+    "status": "IN_REVIEW",
+    "subStatus": null
+  },
+  "addendum": {}
+}
+```
+<br/>
+
+**Event Type**: MOBE_APPLICATION_COMPLETED <br/>
+**Application Status**: Approved <br/>
+**Description**: Invoked when the approval work flow is completed for all accounts within the application. List of sub-status: <ul><li>Auto Approve</li><li>Manual Approve (Ops Approve)</li></ul><br/>
+**Sample Payload**
+```
+  {
+  "applicationId": "100000016",
+  "merchantRefNum": "1582866940938",
+  "eventType": "MOBE_APPLICATION_COMPLETED",
+  "eventData": {
+    "status": "APPROVED",
+    "subStatus": "AUTO_DECISION"
+  },
+  "addendum": {}
+}
+```
+
+<br/>
+
+**Event Type**: MOBE_APPLICATION_COMPLETED <br/>
+**Application Status**: Declined <br/>
+**Description**: Invoked when the approval work flow is completed for all accounts within the application. List of sub-status: <ul><li>Auto Decline</li><li>Manual Decline</li></ul> <br/>
+**Sample Payload**
+```
+ {
+  "applicationId": "100000016",
+  "merchantRefNum": "1582866940938",
+  "eventType": "MOBE_APPLICATION_COMPLETED",
+  "eventData": {
+    "status": "DECLINE",
+    "subStatus": "MANUAL_DECISION"
+  },
+  "addendum": {}
+}
+```
+<br/>
+
+**Event Type**: MOBE_APPLICATION_COMPLETED <br/>
+**Application Status**: Withdraw <br/>
+**Description**: When Credit Underwriter takes withdraw action based on merchant request. <br/>
+**Sample Payload**
+```
+ {
+  "applicationId": "100000016",
+  "merchantRefNum": "1582866940938",
+  "eventType": "MOBE_APPLICATION_COMPLETED",
+  "eventData": {
+    "status": "WITHDRAW",
+    "subStatus": "MANUAL_DECISION"
+  },
+  "addendum": {}
+}
+```
+<br/>
+
+**Event Type**: MOBE_APPLICATION_ERROR <br/>
+**Application Status**: Error <br/>
+**Description**: Any error in the application process has occurred. <br/>
+**Sample Payload**
+```
+  {
+  "applicationId": "100000016",
+  "merchantRefNum": "1582866940938",
+  "eventType": "MOBE_APPLICATION_ERROR",
+  "addendum": {}
+}
+```
+
+## Some Notes on Webhooks
+
++ When the status of one of your application request changes, Paysafe immediately sends a callback to your webhook's endpoint URL to inform you of the status change. 
++ To acknowledge the receipt of the webhook, Paysafe expects an HTTP status of 200 OK or 202 ACCEPTED from your endpoint. In case we receive any other HTTP status code, we assume that you have not received the webhook, and we attempt to resend it.
++ If Paysafe does not get an acknowledgment of receipt with an HTTP Status Code of 200 or 202, it makes a maximum of 2 additional attempts (total 3 attempts) to send a callback to that URL.
++ As Paysafe does not have a notification method to alert you when callbacks are not reaching your endpoint URL, you should make sure that there is continued availability of your endpoint.
++ All endpoint URLs should use HTTPS/SSL to ensure security. Please note that only the default **HTTPS port 443** is supported.
++ In case you have received the same notification multiple times for an already processed event, we request you to ignore the duplicate notification. It is recommended to make the notification URL endpoints idempotent.
 
 
 # ISO Standards
@@ -482,12 +673,12 @@ The Paysafe Test environment can be used to test applications without actually r
 |Element                        |Type                       |Description                        |
 |---                            |---                        |---       |
 |id                             |string<br/>`length<=36`    |This is the unique ID returned in the response. This ID can be used for future associated requests.|
-|paymentType                    |enum                       |This is the payment type associated with this request. Possible values are: <ul><li>CARD</li><li>DD</li><li>SKRILL</li></ul>|
+|paymentType                    |enum                       |This is the payment type associated with this request. Possible values are: <ul><li>CARD</li><li>DD</li></ul>|
 |currency                       |string                     |Supported currency for the account. You can use only those currencies for which you have been configured by Paysafe. See [Supported Currency Codes](#supportedcurrencycodes).|
 |settlementCurrency             |string                     |This is the currency selected by the merchant for payout. You can use only those currencies for which you have been configured by Paysafe. See [Supported Currency Codes](#supportedcurrencycodes).|
 |statementDescriptor            |object                     |Details of [Statement Descriptor](#statementdescriptorobject)|
-|terminalType                   |enum                       |ask dilip? Possible values are:<ul><li>MOTO</li><li>ECOM</li></ul>|
-|cardTypes                      |enum                       |ask dilip?|
+|terminalType                   |enum                       |Mode of transaction. Possible values are:<ul><li>MOTO: Telephonic authentication or IVRS support</li><li>ECOM: e-commerce transaction</li></ul>|
+|cardTypes                      |enum                       |This is the type of card used. Possible values are:<br/><ul><li>AM &ndash; American Express</li><li>DI &ndash; Discover</li><li>JC &ndash; JCB</li><li>MC &ndash; Mastercard</li><li>MD &ndash; Maestro</li><li>SO &ndash; Solo</li><li>VI &ndash; Visa</li><li>VD &ndash; Visa Debit</li><li>VE &ndash; Visa Electron</li></ul>|
 |processingOptions              |array                      |An array of [Processing Option](#processingoptionsobject)|
 |achBankAccount                 |object                     |Details of [ACH Bank Account](#achbankaccountobject)|
 |bacsBankAccount                |object                     |Details of [BACS Bank Account](#bacsbankaccountobject)|
@@ -529,6 +720,9 @@ The Paysafe Test environment can be used to test applications without actually r
 |accountNumber                  |string<br/>`length=1-20`   |This is the merchant's bank account number.|
 |routingNumber                  |string<br/>`length=9`      |This is the 9-digit routing number of the merchant's bank account.|
 
+> **NOTE**: Access to bank accounts is assigned at different levels. You can control access to the bank accounts at various levels using hierarchy. If you create a bank account at the Business legal entity level, the bank account is attached to all the accounts under the BLE.
+Similarly, a bank account created at the location level is attached to all the accounts under that location. And If a bank account is created at the account level, it is attached to only that account.
+
 ```apib
 {
   "id": "e84ea1",    
@@ -550,7 +744,6 @@ The Paysafe Test environment can be used to test applications without actually r
 |state          |string<br/>`length<=40`        |This is the state/province/region of the business owner address. Provide state if within U.S./Canada. For Canada see [Country Codes](#countrycodes). For U.S. see [State Codes](#statecodes). Provide region if outside of U.S./Canada.|
 |country        |string<br/>`length=2`          |This is the country of the business owner address. See [Supported Country Codes](#supportedcountrycodes).|
 |zip            |string<br/>`length<=10`        |This is the zip code or postal code of the business owner address. Cannot contain special characters.|
-|yearsAtAddress |number<br/>`length<=100`       |This is the number of years the business owner has been living at this address. <br/>**Note:** If *yearsAtAddress* in the [current address](#currentaddresses) is less than 3, then you must also include a [previous address](#previousaddresses).|
 
 ```apib
 {
@@ -559,7 +752,6 @@ The Paysafe Test environment can be used to test applications without actually r
   "state":"ON",
   "country":"CA",
   "zip":"M5H 2N2",
-  "yearsAtAddress": "6"
 }
 ```
 <a name="bacsbankaccountobject" title="BACS Bank Account Object"></a>
@@ -573,6 +765,9 @@ The Paysafe Test environment can be used to test applications without actually r
 |beneficiaryAccountName         |string<br/>`length<=250`   |This is the beneficiary account name.|
 |beneficiaryBankCountry         |string<br/>`length=2`      |This is the [country](#bacscountries) of the beneficiary bank's address.|
 |sortCode                       |string<br/>`length=6`      |This is the 6-digit sort code of the merchant's bank account.|
+
+> **NOTE**: Access to bank accounts is assigned at different levels. You can control access to the bank accounts at various levels using hierarchy. If you create a bank account at the Business legal entity level, the bank account is attached to all the accounts under the BLE.
+Similarly, a bank account created at the location level is attached to all the accounts under that location. And If a bank account is created at the account level, it is attached to only that account.
 
 ```apib
 {
@@ -590,9 +785,9 @@ The Paysafe Test environment can be used to test applications without actually r
 |Element              |Type           |Description                        |
 |---                  |---            |---       |
 |id                             |string<br/>`length<=36`    |This is the ID returned in the response. It can be used later to look up or update a merchant.| 
-|tradeName                      |string<br/>`length<=240`   |ask dilip |
+|tradeName                      |string<br/>`length<=240`   |DBA name of the business |
 |tradeAddress                   |object                     |Registered trade [address](#address)|
-|category                       |enum                       |ask dilip|
+|category                       |enum                       |This is the category code of the business. Please see [Merchant Category Codes](#merchantcategorycodes). |
 |mcc                            |string <br/>`length=4`     |This is the merchant category code. Required if category is not mentioned.|
 |website                        |string                     |This is the business website of the merchant.|
 |phoneNumber                    |object                     |Details of the [phone number](#phonenumberobject)|
@@ -616,7 +811,7 @@ The Paysafe Test environment can be used to test applications without actually r
 |Element              |Type           |Description                        |
 |---                  |---            |---       |
 |id                             |string<br/>`length<=36`    |This is the ID returned in the response. It can be used later to look up or update a merchant.| 
-|type                           |enum                       |Type of business. Possible values are: LTD & LLC.|
+|type                           |enum                       |Type of business. For Possible values, please refer [Business Type Codes](#businesstypecodes).|
 |legalName                      |string<br/>`length<=240`   |Registered legal name.|
 |registrationNumber             |string                     |Company's registration number.|
 |taxIdentificationNumber        |string                     |Company's Tax Identification Number.|
@@ -828,6 +1023,9 @@ The Paysafe Test environment can be used to test applications without actually r
 |institutionId                  |string<br/>`length=3`      |This is the 3-digit institution ID of the merchant's bank branch.|
 |paymentToken                   |string<br/>`length<=50`    |This is a token generated by Paysafe that represents the bank account. |
 
+> **NOTE**: Access to bank accounts is assigned at different levels. You can control access to the bank accounts at various levels using hierarchy. If you create a bank account at the Business legal entity level, the bank account is attached to all the accounts under the BLE.
+Similarly, a bank account created at the location level is attached to all the accounts under that location. And If a bank account is created at the account level, it is attached to only that account.
+
 ```apib
 {
   "id": "e84qw1", 
@@ -917,7 +1115,7 @@ The Paysafe Test environment can be used to test applications without actually r
 |Element                        |Type                       |Description                        |
 |---                            |---                        |---       |
 |id                             |string<br/>`length<=36`    |This is the unique ID returned in the response. This ID can be used for future associated requests.|
-|cardType                       |string                     |ask dilip|
+|cardType                       |string                     |This is the type of card used. Possible values are:<br/><ul><li>AM &ndash; American Express</li><li>DI &ndash; Discover</li><li>JC &ndash; JCB</li><li>MC &ndash; Mastercard</li><li>MD &ndash; Maestro</li><li>SO &ndash; Solo</li><li>VI &ndash; Visa</li><li>VD &ndash; Visa Debit</li><li>VE &ndash; Visa Electron</li></ul>||
 |mid                            |string                     |MID to be used for specific card types.|
 |tids                           |array                      |This is an array of string. TIDS to be used for specific card types.|
 
@@ -943,6 +1141,9 @@ The Paysafe Test environment can be used to test applications without actually r
 |lastDigits                     |string<br/>`length=4`      |This is the last 4 digits of account number sent in response.|
 |beneficiaryBankCountry         |string<br/>`length=2`      |This is the [country](#sepacountries) of the beneficiary bank's address.|
 
+> **NOTE**: Access to bank accounts is assigned at different levels. You can control access to the bank accounts at various levels using hierarchy. If you create a bank account at the Business legal entity level, the bank account is attached to all the accounts under the BLE.
+Similarly, a bank account created at the location level is attached to all the accounts under that location. And If a bank account is created at the account level, it is attached to only that account.
+
 ```apib
 {
   "id": "e84rh1", 
@@ -957,7 +1158,7 @@ The Paysafe Test environment can be used to test applications without actually r
 ## statementDescriptor
 |Element                        |Type                       |Description                        |
 |---                            |---                        |---       |
-|descriptor                     |ask dilip                  |ask dilip|
+|descriptor                     |string<br/>`length=240`    |This is the descriptor of the DBA that appears on the card statement.|
 |phone                          |string<br/>`length=10`     |This is the phone number of the account. Cannot contain special characters.|
 
 ```apib
@@ -978,7 +1179,8 @@ The Paysafe Test environment can be used to test applications without actually r
 |loginName  |string<br/>`length=2-31`   |This is the user name that will be configured to access the merchant account in the Merchant Back Office.|
 |password   |string<br/>`length<=17`    |This is the password that the user will use to access the merchant account in the Merchant Back Office.|
 
-
+> **NOTE**: Users are individuals that need access at different levels.  You control user access at various levels using hierarchy. If you create a user at the Business legal entity level, the user will have access to all the accounts and locations created for the BLE. 
+Similarly, a user created at the location level will have access to all accounts under it. And If users are created at account level, they will have access to only that account. 
 
 ```apib
 {
@@ -1014,6 +1216,9 @@ The Paysafe Test environment can be used to test applications without actually r
 |beneficiaryBankRegion  |string<br/>`length<=40` |This is the region of the beneficiary's bank. |
 |beneficiaryBankPostCode    |string<br/>`length<=10`   |This is the post code of the beneficiary's bank.|
 
+> **NOTE**: Access to bank accounts is assigned at different levels. You can control access to the bank accounts at various levels using hierarchy. If you create a bank account at the Business legal entity level, the bank account is attached to all the accounts under the BLE.
+Similarly, a bank account created at the location level is attached to all the accounts under that location. And If a bank account is created at the account level, it is attached to only that account.
+
 ```apib
 {
   "id": "e84xn1", 
@@ -1043,7 +1248,7 @@ The Paysafe Test environment can be used to test applications without actually r
 | HTTP Status Code  | Error Code    | Error Message |Description |
 |-------------------|---------------|-------------  |------------|
 |400                |5068           |No updates are allowed on submitted Applications| No updates are allowed on submitted applications.|
-|400                |5068           |Combination of processing currency, settlement currency and productType is not configured for onboarding config id:<onboardingConfigId>|Combination of processing currency, settlement currency and productType is not configured for onboarding config id:<onboardingConfigId>.|
+|400                |5068           |Combination of processing currency, settlement currency, productType  and terminalType is not configured for onboarding config id:<onboardingConfigId>|Combination of processing currency, settlement currency, productType and terminalType is not configured for onboarding config id:<onboardingConfigId>.|
 |400                |5068           |<bankAccountType>BankAccount should be given|Requird bank account details are not provided.|
 |400                |5068           |At least one bank account should be given|Application is submitted without providing bank account information at any level.|
 |400                |5068           |Only one bank account should be given| Multiple bank accounts are provided at any of BLE/BD/Account level.|
@@ -4351,17 +4556,37 @@ This is how you submit a merchant application request.
         + settlementCurrency: USD` (string) - This is the currency selected by the merchant for payout. You can use only those currencies for which you have been configured by Paysafe. See [Supported Currency Codes](#supportedcurrencycodes).
         + `statementDescriptor` (object) 
             + Properties
-                + descriptor : `` (string) - ? ask dilip
+                + descriptor : `WELLVERSED GOODS PVT` (string) - This is the descriptor of the DBA that appears on the card statement.
                 + phone: `555 888-9999` (string) - This is the phone number of the account. Cannot contain special characters.
-        + terminalType: `MOTO` (enum) - ? ask dilip
+        + terminalType: `MOTO` (enum) - Mode of transaction. 
             + Members
-                + MOTO -
-                + ECOM -
-        + cardTypes: `` () - ask dilip
+                + MOTO - Telephonic authentication or IVRS support
+                + ECOM - E-commerce transaction
+        + cardTypes: `AM` (enum) - This is the type of card used.
+            + Members
+                + AM -  American Express
+                + DI - Discover
+                + JC - JCB
+                + MC - Mastercard
+                + MD - Maestro
+                + SO - Solo
+                + VI - Visa
+                + VD - Visa Debit
+                + VE - Visa Electron
         + `processingOptions` (object)
             + Properties
                 + id: `po-1111` (string) - This is the unique ID returned in the response. This is Processing Object ID.    
-                + cardType: `` () - ask dilip?
+                + cardType: `AM` (enum) - This is the type of card used.
+                    + Members
+                        + AM -  American Express
+                        + DI - Discover
+                        + JC - JCB
+                        + MC - Mastercard
+                        + MD - Maestro
+                        + SO - Solo
+                        + VI - Visa
+                        + VD - Visa Debit
+                        + VE - Visa Electron
                 + mid: `454545` (string) - MID to use for specified card types.
                 + tids: `8989` (array) - TIDS to use for specified card types. This is an array of strings.
         + Include ACH Bank Account
@@ -4426,11 +4651,11 @@ This is how you submit a merchant application request.
     + Properties
         +  id: `bd-1111` (string) - This is the unique ID returned in the response. This ID can be used for future associated requests.
             _Read Only_
-        + tradeName: `Good Office Services USA` (string, required) - ? ask dilip
+        + tradeName: `Good Office Services USA` (string, required) - DBA name of the business
         + `tradeAddress` (object) - Trade address
             + Properties
                 + Include Address
-        + category: `offline` (enum) - ? ask dilip
+        + category: `offline` (enum) - This is the category code of the business. Please see [Merchant Category Codes](#merchantcategorycodes).
         + mcc: `4678` (string) - This is the merchant category code. Required if category is not mentioned.
         + website: `https://goodoffice.us` (string) - This is the business website of the merchant.
         + Include Phone Number
@@ -4450,11 +4675,11 @@ This is how you submit a merchant application request.
 + merchantRefNum: `merchantRefNum8` (string, required) - The merchant's unique identifier for this request.
 + onboardingConfigId: `224112` (string, required) - Merchant onboarding configuration ID that is configured in Paysafe.
 + locale: `en` (string, optional) - Preferred [language/locale](#locale) for this application. Default is "en".
-+ applicationType: `INITIAL_APPLICATION` (enum, optional) - Defaults is INITIAL_APPLICATION. ask dilip
++ applicationType: `INITIAL_APPLICATION` (enum, optional) - Describe the current status of the application. Defaults is INITIAL_APPLICATION. 
     + Members
-        + INITIAL_APPLICATION - ask dilip
-        + ADD_LOCATION - ask dilip
-        + ADD_ACCOUNT - ask dilip
+        + INITIAL_APPLICATION - This denotes a fresh new application
+        + ADD_LOCATION - Add a new location to an existing application
+        + ADD_ACCOUNT - Add a new account to an existing application
 + acceptTermsAndConditions: `true` (boolean, optional) - True- Indicates that the merchnat has accepted the terms and conditions. <br> False - Indicates that the merchant has not accepted the terms and conditions.
 + Include Business Legal Entity
 + addendum: `` (string, optional) - Additional key-values.
@@ -4465,7 +4690,7 @@ This is how you submit a merchant application request.
 + `contacts` (object) - Array of Contacts.
     + Properties
         + id:  `e84gc1` (string) - This is the unique ID returned in the response. This ID can be used for future associated requests.
-        + type: `SALES` (enum) - ? ask dilip.
+        + type: `SALES` (enum) - This indicates the type of the contact.  
             + Members
                 + SALES
                 + BUSINESS
