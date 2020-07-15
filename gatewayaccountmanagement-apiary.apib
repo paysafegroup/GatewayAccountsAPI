@@ -4598,15 +4598,15 @@ This is how you submit a merchant application request.
             + Members
                 + CARD
                 + DD
-        + currency: `CAD` (string) - You can use only those currencies for which you have been configured by Paysafe. See [Supported Currency Codes](#supportedcurrencycodes).
+        + currency: `CAD` (string) - Supported currency for the account. You can use only Paysafe configured currencies. See [Supported Currency Codes](#supportedcurrencycodes).
             _Mandatory_
-        + settlementCurrency: USD` (string) - This is the currency selected by the merchant for payout. You can use only those currencies for which you have been configured by Paysafe. See [Supported Currency Codes](#supportedcurrencycodes).
+        + settlementCurrency: USD` (string) - This is the currency selected by the merchant for payout. You can use only Paysafe configured currencies. See [Supported Currency Codes](#supportedcurrencycodes).
             _Optional_
         + `statementDescriptor` (object) 
             + Properties
                 + descriptor : `WELLVERSED GOODS PVT` (string) - This is the descriptor of the DBA that appears on the card statement.
                     _Optional_
-                + phone: `555 888-9999` (string) - This is the phone number of the account. Cannot contain special characters.
+                + phone: `555 888-9999` (string) - This is the phone number of the account. This cannot contain special characters.
                     _Optional_
         + terminalType: `MOTO` (enum) - Mode of transaction. 
             _Mandatory_
@@ -4627,7 +4627,7 @@ This is how you submit a merchant application request.
                 + VE - Visa Electron
         + `processingOptions` (object)
             + Properties
-                + id: `po-1111` (string) - This is the unique ID returned in the response. This is Processing Object ID.  
+                + id: `po-1111` (string) - This is the unique ID returned in the response. This ID can be used for future associated requests.
                     _Read Only_
                 + cardType: `AM` (enum) - This is the type of card used.
                     _Optional_
@@ -4643,7 +4643,7 @@ This is how you submit a merchant application request.
                         + VE - Visa Electron
                 + mid: `454545` (string) - MID to use for specified card types.
                     _Mandatory_
-                + tids: `8989` (array) - TIDS to use for specified card types. This is an array of strings.
+                + tids: `8989` (array) - This is an array of string. TIDS to be used for specific card types.
                     _Mandatory_
         + Include ACH Bank Account
         + Include BACS Bank Account
@@ -4667,15 +4667,15 @@ This is how you submit a merchant application request.
             _Mandatory_
         + country: `CA` (string) - This is the [country code](#countrycodes) of the address.
             _Mandatory_
-        + zip: `M5H 2N2` (string) - This is the zip/postal code of the address. Cannot contain special characters. 
+        + zip: `M5H 2N2` (string) - This is the zip/postal code of the address. This cannot contain special characters.
             _Optional_
 
 ## ACH Bank Account
 + `achBankAccount` (object) : Details of the ACH Bank Account.
     + Properties
-        + id: `e84ea1` (string) - This is the unique ID returned in the response. This ID can be used for future associated requests.
+        + id: `e84ea1` (string) - This is the merchant's ACH bank account ID returned in the response.
             _Read Only_
-        + lastDigits: `3954` (string) - This is the last 4 digits of account number sent in response.
+        + lastDigits: `3954` (string) - This is the last 4-digits of the account number sent in response.
             _Read Only_
         + accountNumber: `5807560412853954` (string) - This is the merchant's bank account number.
             _Mandatory_
@@ -4685,13 +4685,13 @@ This is how you submit a merchant application request.
 ## BACS Bank Account
 + `bacsBankAccount` (object) : Details of the BACS Bank Account.
     + Properties
-        + id: `e84gc1` (string) - This is the unique ID returned in the response. This ID can be used for future associated requests.
+        + id: `e84gc1` (string) - This is the merchant's BACS bank account ID returned in the response.
             _Read Only_
         + accountNumber: `94001521` (string) - This is the merchant's 8-digit bank account number.
             _Mandatory_
-        + lastDigits: `1521` (string) - This is the last 4 digits of account number sent in response
+        + lastDigits: `1521` (string) - This is the last 4-digits of account number sent in response.
             _Read Only_
-        + beneficiaryAccountName: `Main` (string) - This is the beneficiary account name.
+        + beneficiaryAccountName: `Main` (string) - This is the beneficiary's account name.
             _Mandatory_
         + beneficiaryBankCountry: `GB` (string) - This is the [country](#bacscountries) of the beneficiary bank's address.
             _Mandatory_
@@ -4730,15 +4730,15 @@ This is how you submit a merchant application request.
     + Properties
         +  id: `bd-1111` (string) - This is the unique ID returned in the response. This ID can be used for future associated requests.
             _Read Only_
-        + tradeName: `Good Office Services USA` (string) - DBA name of the business
+        + tradeName: `Good Office Services USA` (string) - DBA name of the business.
             _Mandatory_
-        + `tradeAddress` (object) - Trade address
+        + `tradeAddress` (object) - Registered Trade address.
             _Optional_
             + Properties
                 + Include Address
         + category: `offline` (enum) - This is the category code of the business. Please see [Merchant Category Codes](#merchantcategorycodes).
             _Mandatory_
-        + mcc: `4678` (string) - This is the merchant category code. Required if category is not mentioned.
+        + mcc: `4678` (string) - This is the merchant category code. This is required if the category is not mentioned.
             _Optional_
         + website: `https://goodoffice.us` (string) - This is the business website of the merchant.
             _Optional_
@@ -4758,7 +4758,7 @@ This is how you submit a merchant application request.
             _Mandatory_
 
 ## ConslidatedApplicationObject
-+ id:`100001556` (string) - This is the unique ID returned in the response. This ID can be used for future associated requests.
++ id:`100001556` (string) - This is the unique ID returned in the response. It can be used later to look up or update a merchant.
     _Read Only_
 + name:`XYZ` (string) - This is the suitable name given to the application.
     _Optional_
@@ -4766,20 +4766,20 @@ This is how you submit a merchant application request.
     _Mandatory_
 + onboardingConfigId: `224112` (string) - Merchant onboarding configuration ID that is configured in Paysafe.
     _Mandatory_
-+ locale: `en` (string) - Preferred [language/locale](#locale) for this application. Default is "en".
++ locale: `en` (string) -  Preferred [language/locale](#locale) for this application. Default is "en".
     _Optional_
-+ applicationType: `INITIAL_APPLICATION` (enum) - Describe the current status of the application. Defaults is INITIAL_APPLICATION. 
++ applicationType: `INITIAL_APPLICATION` (enum) - Describes the current status of the application. Default is INITIAL_APPLICATION. 
     _Optional_
     + Members
         + INITIAL_APPLICATION - This denotes a fresh new application
         + ADD_LOCATION - Add a new location to an existing application
         + ADD_ACCOUNT - Add a new account to an existing application
-+ acceptTermsAndConditions: `true` (boolean) - True- Indicates that the merchnat has accepted the terms and conditions. <br> False - Indicates that the merchant has not accepted the terms and conditions.
++ acceptTermsAndConditions: `true` (boolean) - True- This indicates that the merchant has accepted the terms and conditions. False - Indicates that the merchant has not accepted the terms and conditions.
     _Optional_
 + Include Business Legal Entity
 + addendum: `` (string) - Additional key-values.
     _Optional, length=10_
-+ submit: `true` (boolean) - True - Indicates that the application is freezed and ready for processing. <br> False - Indicates that the appliaction is still in progress and not ready for processing.
++ submit: `true` (boolean) - rue - This indicates that the application is submitted and ready for further processing. False - This indicates that the application is still in progress and not ready for further processing.
     _Optional_
 
 
@@ -4822,11 +4822,11 @@ This is how you submit a merchant application request.
 ## EFT Bank Account
 + `eftBankAccount` (object) : Details of the EFT Bank Account.
     + Properties
-        + id: `e84fc1` (string) - This is the unique ID returned in the response. This ID can be used for future associated requests.
+        + id: `e84fc1` (string) - This is the merchant's EFT bank account ID returned in the response.
             _Read Only_
         + accountNumber: `5807560412853954` (string) - This is the merchant's bank account number.
             _Mandatory_
-        + lastDigits: `3954` (string) - This is the last 4 digits of account number sent in response.
+        + lastDigits: `3954` (string) - This is the last 4-digits of account number sent in response.
             _Read Only_
         + transitNumber: `52487` (string) - This is the 5-digit transit number of the merchant's bank branch.
             _Mandatory_
@@ -4882,7 +4882,7 @@ This is how you submit a merchant application request.
                 + CONTROL_PRONG
         + ssn: `123456789` (string) - This is the Social Security Number of the person.
             _Optional_
-        + ssnLastFour: `6789` (string) - This is the last 4 digits of SSN sent in response.  
+        + ssnLastFour: `6789` (string) - This is the last 4 digits of SSN sent in response.   
             _Read Only_
         + sin: `466441111` (string) - This is the Social Insurance Number of the person.
             _Optional_
@@ -4899,13 +4899,13 @@ This is how you submit a merchant application request.
     + Properties
         + id: `e84fl1` (string) - This is the merchant's bank account ID returned by Paysafe that can be used later to look up or update that merchant bank account.
             _Read Only_
-        + beneficiaryAccountName: `Main` (string) - This is the beneficiary account name.
+        + beneficiaryAccountName: `Main` (string) - This is the beneficiary's account name.
             _Mandatory_
-        + swiftNumber: `85741236` (string) - This is the swift number of the merchant's bank account.
+        + swiftNumber: `85741236` (string) - This is the swift number of the merchant's bank account. Alphanumeric characters only.
             _Mandatory_
-        + ibanNumber: `94001521002421` (string) - This is the IBAN number of the merchant's bank account.
+        + ibanNumber: `94001521002421` (string) - This is the IBAN of the merchant's bank account. Alphanumeric characters only.
             _Mandatory_
-        + lastDigits: `2421` (string) - This is the last 4 digits of account number sent in response.
+        + lastDigits: `2421` (string) - This is the last 4-digits of account number sent in response.
             _Read Only_
         + beneficiaryBankCountry: `GB` (string) - This is the [country](#sepacountries) of the beneficiary bank's address.
             _Mandatory_
@@ -4917,7 +4917,7 @@ This is how you submit a merchant application request.
             _Read Only_
         + email: `johnsmith@email.com` (string) - This is the email address that will be associated with the user.
             _Mandatory_
-        + fullName: `John Smith` (string) - This is the full nameof the user.
+        + fullName: `John Smith` (string) - This is the full name of the user.
             _Mandatory_
         + loginName: `john_smith` (string) - This is the user that will be configured to access the merchant account in the Merchant Back Office.
             _Mandatory_
