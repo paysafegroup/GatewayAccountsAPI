@@ -3,31 +3,31 @@ HOST: https://api.test.paysafe.com/merchant/
 
 # Account Management
 
-The Paysafe Account Management API allows our Platform Partners to create their own white-labelled merchant on-boarding experience, via a set of REST-based calls.
-This API enables your merchants to build payments into their platform products and introduce payment capabilities to their suite of services. 
+The Paysafe Account Management API allows our Platform Partners to create their own white-labeled merchant on-boarding experience, via a set of REST-based calls.
+This API enables merchants to build payments into their platform products and introduce payment capabilities to their suite of services. 
 
-Once a merchant application has been received, Paysafe will quickly enable the merchant to immediately start accepting payments with little to no friction.
+Once a merchant application is received, Paysafe quickly enables the merchant to immediately start accepting payments with little to no friction.
 
 # Prerequisites
 
-Below are the Prerequisites steps for merchant onboarding:
+Below are the prerequisite steps for merchant onboarding:
 
-1. The partner has to get in touch with the account manager to set up his account.
+1. The partner must contact the account manager to set up the account.
 2. Once the account is set up, the partner will get the Onboarding Config ID.
-3. Paysafe will also provide partner with the API keys.
+3. Paysafe will also provide the API keys to the partner. 
 
 <a name="apikey" title="Authentication"></a>
 # Authentication 
 
-In order for you to use the Paysafe REST API, Paysafe must first set you up on their system
-and provide you with an API key. Your API key looks something like this:
+To use the Paysafe REST API, Paysafe must first set up its system for you 
+and then provide an API key. Your API key looks something like this:
  * Key ID – PartnerXYZ
  * Key Password – B-tst1-0-51ed39e4-312d02345d3f123120881dff9bb4020a89e8ac44cdfdcecd702151182fdc952272661d290ab2e5849e31bb03deede7e
 
 The case-sensitive API key is sent using HTTP Basic Authentication. To use HTTP Basic Authentication, you must send the API key credentials using the Authorization header with every request. The Authorization header is constructed as follows:
- 1. Combine the Key ID and Key Password into a string separated by a colon, e.g., “Key ID:Key Password”.
+ 1. Combine the Key ID and Key Password into a string separated by a colon, for example: “Key ID:Key Password”.
  2. The resulting string literal is then encoded using Base64.
- 3. The authorization method and a space (i.e., “Basic”) are added before the encoded string.
+ 3. The authorization method and a space (that is, “Basic”) are added before the encoded string.
 
 For example, using the Key ID and Password examples above, the header is formed as follows:
 
@@ -51,9 +51,9 @@ With the Accounts API, you can:
 
 * Verify support for all the operation types that you require.
 * Review all common errors as well as errors that may occur for each operation.
-* Verify the lengths and format for all attributes you send.
+* Verify the length and format of all attributes you send.
 
-For access to Test accounts and credentials, please contact your account manager or reach out to <integrations@paysafe.com>. 
+For access to Test accounts and credentials, contact your account manager or reach out to <integrations@paysafe.com>. 
 
 ###  Test URL
 To test your integration with Paysafe, use the following Test URL:
@@ -90,7 +90,7 @@ For example:
 <a name="webhooks" title="Webhooks"></a>
 # Webhooks
 
-A Webhook is an HTTP callback that is triggered when an event takes place. To configure your webhooks, get in touch with your account manager or reach us at <integrations@paysafe.com>.
+A Webhook is an HTTP callback that is triggered when an event takes place. To configure your webhooks, contact your account manager or reach us at <integrations@paysafe.com>.
 
 > **Note:** To receive webhooks from Paysafe, you must create a callback URL to receive the webhook that is triggered. 
 You are responsible for ensuring its continued availability.
@@ -137,7 +137,7 @@ Webhooks can be triggered for the following events:
 
 **Event Type**: MOBE_APPLICATION_IN_PROGRESS <br/>
 **Application Status**: In-Review <br/>
-**Description**: Invoked once the case has been raised successfully for the specific application.  List of sub-status: <ul><li>Vendor Checks In-Progress</li><li>Waiting for CU Manual check</li><li>Processing for CU Manual check</li><li>Waiting for Ops Setup Manual check</li><li>Processing for Ops Setup Manual check</li><li>Waiting for Ops QA Manual check</li><li>Processing for Ops QA Manual check</li><li>Waiting for Sales Manual check</li><li>Processing for Sales Manual check</li><li>Referred for Merchant Docs</li><li>Returned to Partner</li></ul><br/>
+**Description**: Invoked once the case is raised successfully for the specific application.  List of sub-status: <ul><li>Vendor Checks In-Progress</li><li>Waiting for CU Manual check</li><li>Processing for CU Manual check</li><li>Waiting for Ops Setup Manual check</li><li>Processing for Ops Setup Manual check</li><li>Waiting for Ops QA Manual check</li><li>Processing for Ops QA Manual check</li><li>Waiting for Sales Manual check</li><li>Processing for Sales Manual check</li><li>Referred for Merchant Docs</li><li>Returned to Partner</li></ul><br/>
 **Sample Payload**
 ```
   {
@@ -224,11 +224,11 @@ Webhooks can be triggered for the following events:
 ## Some Notes on Webhooks
 
 + When the status of one of your application request changes, Paysafe immediately sends a callback to your webhook's endpoint URL to inform you of the status change. 
-+ To acknowledge the receipt of the webhook, Paysafe expects an HTTP status of 200 OK or 202 ACCEPTED from your endpoint. In case we receive any other HTTP status code, we assume that you have not received the webhook, and we attempt to resend it.
-+ If Paysafe does not get an acknowledgment of receipt with an HTTP Status Code of 200 or 202, it makes a maximum of 2 additional attempts (total 3 attempts) to send a callback to that URL.
-+ As Paysafe does not have a notification method to alert you when callbacks are not reaching your endpoint URL, you should make sure that there is continued availability of your endpoint.
-+ All endpoint URLs should use HTTPS/SSL to ensure security. Please note that only the default **HTTPS port 443** is supported.
-+ In case you have received the same notification multiple times for an already processed event, we request you to ignore the duplicate notification. It is recommended to make the notification URL endpoints idempotent.
++ Paysafe expects an HTTP status of 200 OK or 202 ACCEPTED from your endpoint as an acknowledgement. In case any other HTTP status code is received, Paysafe assumes you have not received the webhook, and attempts to resend it.
++ If Paysafe does not get an acknowledgment (200 or 202), it makes a maximum of two additional attempts (total three attempts) to send a callback to that URL.
++ As Paysafe does not have a notification method to alert you when callbacks are not reaching your endpoint URL, you should ensure continued availability of your endpoint.
++ All endpoint URLs should use HTTPS/SSL to ensure security. Note that only the default **HTTPS port 443** is supported.
++ You must ignore the duplicate notifications for an already processed event. It is recommended to make the notification URL endpoints idempotent.
 
 
 # ISO Standards
@@ -237,8 +237,8 @@ Webhooks can be triggered for the following events:
 ## Currency Codes
 
 **Note:**
- * The table below lists the currencies in which transaction requests are processed, but note that they may be settled in a different currency. 
- * Not all currencies are supported by all banks. Contact your account manager for more information about which currencies are supported for your merchant account.
+ * The table below lists the currencies in which transaction requests are processed. However, remember that the transaction settlement can happen in a different currency. 
+ * Banks may not support all currencies. Contact your account manager for more information on the supported currencies.
 
 |Currency |Code |
 |--- |--- |
@@ -741,7 +741,7 @@ Similarly, a bank account created at the location level is attached to all the a
 |---            |---                            |---        |---       |
 |id             |string<br/>`length<=36`        |Read Only  |This is the unique ID returned in the response. This ID can be used for future associated requests.| 
 |street         |string<br/>`length<=50`        |No         |This is the first line of the street address.|
-|street2        |string<br/>`length<=50`        |No         |This is the second line of the street address, if required (e.g., apartment number).|
+|street2        |string<br/>`length<=50`        |No         |This is the second line of the street address, if required (for example: apartment number).|
 |city           |string<br/>`length<=40`        |No         |This is the city where the address is located.|
 |state          |string<br/>`length<=40`        |Yes        |This is the state/province/region of the business owner's address. Provide state if within U.S./Canada. For Canada see [Country Codes](#countrycodes). For U.S. see [State Codes](#statecodes). Provide region if outside of U.S./Canada.|
 |country        |string<br/>`length=2`          |Yes        |This is the country of the business owner's address. See [Supported Country Codes](#supportedcountrycodes).|
@@ -1903,7 +1903,7 @@ This call returns a status of READY if the API is available.
 
 ## Create Application [/merchant/v1/applications]
 
-Create Application allows you to create a new Application request for merchant onboarding or add a new location or account to an application.
+Create Application allows you to create a new Application request for merchant onboarding. It also allows you to add a new location or account to an application.
 <br>
 
 ### Create an Application [POST]
@@ -1915,10 +1915,7 @@ Click **Create an Application** above to see the three examples of how to create
 * This is how you add a new LOCATION to an already existing merchant account. To add a new LOCATION to a merchant account, *type* should be *ADDITIONAL_LOCATION*.
 * This is how you add a new ACCOUNT to an already existing merchant account. To add a new ACCOUNT to a merchant account, *type* should be *ADDITIONAL_ACCOUNT*.
 
- > **Note:** If you set *submit=true*, then you will not be able to update the application further. <br>
- > **Note:** If you want to submit the Initial application at one go, set *submit=true* in the request. <br>
- > **Note:** If the merchant wants to save the application and provide further information later, set *submit=false* in the request.<br>
- > **Note:** Once you are ready to submit the application for further processing, set *submit=true* in the request.<br>
+ > **Note:** Set submit=true only when your application is ready for final processing. Once you set submit=true, you will not be able to make further changes. If your application is not fully complete and you want to revisit to edit details later, then set submit=false.        
 
 + Attributes 
     + Include ConslidatedApplicationObject
@@ -4308,7 +4305,7 @@ Submit Application allows you to submit an Application request for merchant onbo
 
 This is how you submit a merchant application request.
 
-**Note:** When the merchant application is successfully submitted, you cannot make any further changes in the application.
+**Note:** You cannot make changes after you successfully submit the application.
 
 + Parameters
 
