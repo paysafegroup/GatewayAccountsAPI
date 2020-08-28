@@ -3,18 +3,18 @@ HOST: https://api.test.paysafe.com/merchant/
 
 # Account Management
 
-The Paysafe Account Management API allows our Platform Partners to create their own white-labeled merchant on-boarding experience, via a set of REST-based calls.
-This API enables merchants to build payments into their platform products and introduce payment capabilities to their suite of services. 
+The Paysafe Accounts API allows our Platform Partners to create their own white-labeled merchant onboarding experience, via a single API call. 
 
-Once a merchant application is received, Paysafe quickly enables the merchant to immediately start accepting payments with little to no friction.
+The new API simplifies the entire merchant onboarding process and performs underwriting checks as needed. Once a merchant application is received, Paysafe will quickly enable the merchant to accept payments using the selected payment method(s).
 
 # Prerequisites
+<a name="prereq" title="Prerequisites"></a>
 
 Below are the prerequisite steps for merchant onboarding:
 
 1. The partner must contact the account manager to set up the account.
-2. Once the account is set up, the partner will get the Onboarding Config ID.
-3. Paysafe will also provide the API keys to the partner. 
+2. Once the account is set up, the partner will get the Onboarding Config ID from the Paysafe integrations team. 
+3. Paysafe integrations team will also provide authentication credentials to the partner.
 
 <a name="apikey" title="Authentication"></a>
 # Authentication 
@@ -34,7 +34,7 @@ For example, using the Key ID and Password examples above, the header is formed 
 `Authorization: Basic
 UGFydG5lclhZWjpCLXRzdDEtMC01MWVkMzllNC0zMTJkMDIzNDVkM2YxMjMxMjA4ODFkZmY5YmI0MDIwYTg5ZThhYzQ0Y2RmZGNlY2Q3MDIxNTExODJmZGM5NTIyNzI2NjFkMjkwYWIyZTU4NDllMzFiYjAzZGVlZGU3ZQ==`
 
-For additional details, please refer to [Authentication](https://developer.paysafe.com/en/rest-apis/reference-information/important-integration-concepts/authentication/).
+For additional details, refer to [Authentication](https://developer.paysafe.com/en/rest-apis/reference-information/important-integration-concepts/authentication/).
 
 **Note:** Your Production API key will be different from your Test API key. Contact your account manager for details. You must keep your API keys safe and ensure that they are used appropriately for your needs.
 
@@ -49,9 +49,10 @@ It is important to make sure that your systems are working correctly before goin
 
 With the Accounts API, you can:
 
+* Verify the lengths and formats for all attributes you send.
 * Verify support for all the operation types that you require.
 * Review all common errors as well as errors that may occur for each operation.
-* Verify the length and format of all attributes you send.
+
 
 For access to Test accounts and credentials, contact your account manager or reach out to <integrations@paysafe.com>. 
 
@@ -75,8 +76,11 @@ Once you are satisfied with your integration to the Test environment, you must r
 ### Go Live Checklist
 1. You must have a production account and an Onboarding Config ID for your production account.
 2. You must have the API Keys for the production environment.
-3. You must have Webhooks configured for all the events.
-4. You must use the Production URL for your API calls.
+3. You must use the Production URL for your API calls.
+4. You must have [Webhooks](#webhooks) configured for all the events. **Note:** Configuring Webhooks is optional though.
+
+**Note:** For items 1, 2, & 3, reach out to your account manager or <integrations@paysafe.com> for any issues.
+
 
 ### Production URL
 To process live requests with Paysafe, use the following Production URL:
@@ -90,7 +94,7 @@ For example:
 <a name="webhooks" title="Webhooks"></a>
 # Webhooks
 
-A Webhook is an HTTP callback that is triggered when an event takes place. To configure your webhooks, contact your account manager or reach us at <integrations@paysafe.com>.
+A Webhook is an HTTP callback that is triggered when an event takes place. To configure your webhooks, get in touch with your account manager or reach us at <integrations@paysafe.com>.
 
 > **Note:** To receive webhooks from Paysafe, you must create a callback URL to receive the webhook that is triggered. 
 You are responsible for ensuring its continued availability.
@@ -119,7 +123,7 @@ Webhooks can be triggered for the following events:
 
 **Event Type**: MOBE_APPLICATION_RECEIVED <br/>
 **Application Status**: Received <br/>
-**Description**: Submitted application has passed all the data validation tests and is picked up for processing. <br/>
+**Description**: The application has passed all the data validation tests and is submitted for processing. <br/>
 **Sample Payload**
 ```
   {
@@ -137,7 +141,7 @@ Webhooks can be triggered for the following events:
 
 **Event Type**: MOBE_APPLICATION_IN_PROGRESS <br/>
 **Application Status**: In-Review <br/>
-**Description**: Invoked once the case is raised successfully for the specific application.  List of sub-status: <ul><li>Vendor Checks In-Progress</li><li>Waiting for CU Manual check</li><li>Processing for CU Manual check</li><li>Waiting for Ops Setup Manual check</li><li>Processing for Ops Setup Manual check</li><li>Waiting for Ops QA Manual check</li><li>Processing for Ops QA Manual check</li><li>Waiting for Sales Manual check</li><li>Processing for Sales Manual check</li><li>Referred for Merchant Docs</li><li>Returned to Partner</li></ul><br/>
+**Description**: Invoked once the case has been raised successfully for the specific application.  List of sub-status: <ul><li>Vendor Checks In-Progress</li><li>Waiting for CU Manual check</li><li>Processing for CU Manual check</li><li>Waiting for Ops Setup Manual check</li><li>Processing for Ops Setup Manual check</li><li>Waiting for Ops QA Manual check</li><li>Processing for Ops QA Manual check</li><li>Waiting for Sales Manual check</li><li>Processing for Sales Manual check</li><li>Referred for Merchant Docs</li><li>Returned to Partner</li></ul><br/>
 **Sample Payload**
 ```
   {
@@ -155,7 +159,7 @@ Webhooks can be triggered for the following events:
 
 **Event Type**: MOBE_APPLICATION_COMPLETED <br/>
 **Application Status**: Approved <br/>
-**Description**: Invoked when the approval workflow is completed for all accounts within the application. List of sub-status: <ul><li>Auto Approve</li><li>Manual Approve (Ops Approve)</li></ul><br/>
+**Description**: Invoked when the approval workflow is completed for all accounts within the application. List of sub-status: <ul><li>Auto_Decision - Application was automatically processed by the system.</li><li>Manual_Decision - Application was reviewed and approved by Paysafe</li></ul><br/>
 **Sample Payload**
 ```
   {
@@ -164,7 +168,7 @@ Webhooks can be triggered for the following events:
   "eventType": "MOBE_APPLICATION_COMPLETED",
   "eventData": {
     "status": "APPROVED",
-    "subStatus": "AUTO_DECISION"
+    "subStatus": "AUTO_DECISION" or "MANUAL_DECISION"
   },
   "addendum": {}
 }
@@ -174,7 +178,7 @@ Webhooks can be triggered for the following events:
 
 **Event Type**: MOBE_APPLICATION_COMPLETED <br/>
 **Application Status**: Declined <br/>
-**Description**: Invoked when the approval workflow is completed for all accounts within the application. List of sub-status: <ul><li>Auto Decline</li><li>Manual Decline</li></ul> <br/>
+**Description**: Invoked when the approval workflow is completed for all accounts within the application. List of sub-status: <ul><li>Auto_Decision - Application was automatically processed by the system.</li><li>Manual_Decision - Application was reviewed and rejected by Paysafe</li></ul><br/>
 **Sample Payload**
 ```
  {
@@ -182,12 +186,13 @@ Webhooks can be triggered for the following events:
   "merchantRefNum": "1582866940938",
   "eventType": "MOBE_APPLICATION_COMPLETED",
   "eventData": {
-    "status": "DECLINE",
-    "subStatus": "MANUAL_DECISION"
+    "status": "DECLINED",
+    "subStatus": "MANUAL_DECISION" or "AUTO_DECISION"
   },
   "addendum": {}
 }
 ```
+
 <br/>
 
 **Event Type**: MOBE_APPLICATION_COMPLETED <br/>
@@ -237,8 +242,8 @@ Webhooks can be triggered for the following events:
 ## Currency Codes
 
 **Note:**
- * The table below lists the currencies in which transaction requests are processed. However, remember that the transaction settlement can happen in a different currency. 
- * Banks may not support all currencies. Contact your account manager for more information on the supported currencies.
+ * The table below lists the currencies in which transaction requests are processed, but note that they may be settled in a different currency. 
+ * Not all currencies are supported by all banks. Contact your account manager for more information about which currencies are supported for your merchant account.
 
 |Currency |Code |
 |--- |--- |
@@ -328,7 +333,7 @@ Webhooks can be triggered for the following events:
 |Viet Nam Dong                              |VND  |
 
 <a name="provincecodes" title="Province Codes"></a>
-## Province Codes
+## Canada Province Codes
 
 |Province               |Code   |
 |---                    |---    |
@@ -347,7 +352,7 @@ Webhooks can be triggered for the following events:
 |Yukon                  |YT     |
 
 <a name="statecodes" title="State Codes"></a>
-## State Codes
+## US State Codes
 
 |State                  |Code   |
 |---                    |---    |
@@ -672,12 +677,12 @@ Webhooks can be triggered for the following events:
 
 <a name="accountobject" title="Account Object"></a>
 ## Account
-|Element                        |Type                       |Required   |Description                        |
-|---                            |---                        |---        |---       |
+|Element                        |Type                       |Required|Description                        |
+|---                            |---                        |---|---       |
 |id                             |string<br/>`length<=36`    |Read Only  |This is the unique ID returned in the response. This ID can be used for future associated requests.|
-|paymentType                    |enum                       |No         |This is the payment type associated with this request. Possible values are: <ul><li>CARD</li><li>DD</li></ul>|
-|currency                       |string                     |Yes        |Supported currency for the account. Supported currency for the account. You can use only Paysafe configured currencies. See [Supported Currency Codes](#supportedcurrencycodes).|
-|settlementCurrency             |string                     |No         |This is the currency selected by the merchant for payout. You can use only Paysafe configured currencies. See [Supported Currency Codes](#supportedcurrencycodes).|
+|paymentType                    |enum                       |No         |This is the payment type associated with this request. Possible values are: <ul><li>CARD</li><li>DD</li></ul><br>**Note:** All enums are case-sensitive.| 
+|currency                       |string<br/>`length<=3`     |Yes        |Supported currency for the account. Supported currency for the account. You can use only Paysafe configured currencies. See [Supported Currency Codes](#supportedcurrencycodes).|
+|settlementCurrency             |string<br/>`length<=3`     |No         |This is the currency selected by the merchant for payout. You can use only Paysafe configured currencies. See [Supported Currency Codes](#supportedcurrencycodes).|
 |statementDescriptor            |object                     |No         |Details of [Statement Descriptor](#statementdescriptorobject)|
 |terminalType                   |enum                       |Yes        |Mode of transaction. Possible values are:<ul><li>MOTO: Telephonic authentication or IVRS support</li><li>ECOM: e-commerce transaction</li></ul>|
 |cardTypes                      |enum                       |Yes        |This is the type of card used. Possible values are:<br/><ul><li>AM &ndash; American Express</li><li>DI &ndash; Discover</li><li>JC &ndash; JCB</li><li>MC &ndash; Mastercard</li><li>MD &ndash; Maestro</li><li>SO &ndash; Solo</li><li>VI &ndash; Visa</li><li>VD &ndash; Visa Debit</li><li>VE &ndash; Visa Electron</li></ul>|
@@ -713,14 +718,14 @@ Webhooks can be triggered for the following events:
 ```
 
 <a name="achbankaccountobject" title="ACH Bank Account Object"></a>
-## ACH Bank Account
+## ACH Bank Account (Applicable for US Merchants Only)
 
-|Element                        |Type                       |Required |Description                        |
-|---                            |---                        |---      |---       |
-|id                             |string<br/>`length<=36`    |Read Only|This is the merchant's ACH bank account ID returned in the response.|
+|Element                        |Type                       |Required|Description                        |
+|---                            |---                        |---|---       |
+|id                             |string<br/>`length<=36`    |Read Only|This is the merchant's ACH bank account ID returned in the response after some delay.|
 |lastDigits                     |string<br/>`length=4`      |Read Only|This is the last 4-digits of the account number sent in response.|
-|accountNumber                  |string<br/>`length=1-20`   |Yes      |This is the merchant's bank account number.|
-|routingNumber                  |string<br/>`length=9`      |Yes      |This is the 9-digit routing number of the merchant's bank account.|
+|accountNumber                  |string<br/>`length=1-20`   |Yes|This is the merchant's bank account number.|
+|routingNumber                  |string<br/>`length=9`      |Yes|This is the 9-digit routing number of the merchant's bank account.|
 
 > **NOTE**: Access to bank accounts is assigned at different levels. You can control access to the bank accounts at various levels using hierarchy. If you create a bank account at the Business legal entity level, the bank account is attached to all the accounts under the BLE.
 Similarly, a bank account created at the location level is attached to all the accounts under that location. And If a bank account is created at the account level, it is attached to only that account.
@@ -737,15 +742,15 @@ Similarly, a bank account created at the location level is attached to all the a
 <a name="addressesobject" title="Addresses Object"></a>
 ## Addresses
 
-|Element        |Type                           |Required   |Description                        |
-|---            |---                            |---        |---       |
-|id             |string<br/>`length<=36`        |Read Only  |This is the unique ID returned in the response. This ID can be used for future associated requests.| 
-|street         |string<br/>`length<=50`        |No         |This is the first line of the street address.|
-|street2        |string<br/>`length<=50`        |No         |This is the second line of the street address, if required (for example: apartment number).|
-|city           |string<br/>`length<=40`        |No         |This is the city where the address is located.|
-|state          |string<br/>`length<=40`        |Yes        |This is the state/province/region of the business owner's address. Provide state if within U.S./Canada. For Canada see [Country Codes](#countrycodes). For U.S. see [State Codes](#statecodes). Provide region if outside of U.S./Canada.|
-|country        |string<br/>`length=2`          |Yes        |This is the country of the business owner's address. See [Supported Country Codes](#supportedcountrycodes).|
-|zip            |string<br/>`length<=10`        |No         |This is the zip code or postal code of the business owner's address. This cannot contain special characters.|
+|Element                        |Type           |Required|Description                        |
+|---                            |---            |---|---       |
+|id             |string<br/>`length<=36`        |Read Only|This is the unique ID returned in the response after some delay. This ID can be used for future associated requests.| 
+|street         |string<br/>`length<=50`        |No|This is the first line of the street address.|
+|street2        |string<br/>`length<=50`        |No|This is the second line of the street address, if required (for example: apartment number).|
+|city           |string<br/>`length<=40`        |No|This is the city where the address is located.|
+|state          |string<br/>`length<=40`        |Yes|This is the state/province/region of the business owner's address. Provide state if within U.S./Canada. For Canada see [Province Codes](#provincecodes). For U.S. see [State Codes](#statecodes). Provide region if outside of U.S./Canada.|
+|country        |string<br/>`length=2`          |Yes|This is the country of the business owner's address. See [Supported Country Codes](#supportedcountrycodes).|
+|zip            |string<br/>`length<=10`        |No|This is the zip code or postal code of the business owner's address. This cannot contain special characters.|
 
 ```apib
 {
@@ -756,40 +761,36 @@ Similarly, a bank account created at the location level is attached to all the a
   "zip":"M5H 2N2",
 }
 ```
+
+
 ## Application
 
-|Element                        |Type                           ||Description                        |
+|Element                        |Type                           |Required|Description                        |
 |---                            |---                            |---|---       |
-|id                             |string<br/>`length<=36`        |Read Only|This is the unique ID returned in the response. It can be used later to look up or update a merchant.| 
-|name                           |string                         |No|This is the suitable name given to the application.|
+|id                             |string<br/>`length<=36`        |Read Only|This is the unique ID returned in the response after some delay. It can be used later to look up or update a merchant.| 
+|name                           |string<br/>`length<=255`       |No|This is the suitable name given to the application.|
 |merchantRefNum                 |string<br/>`length<=255`       |Yes|The merchant's unique identifier for this request.|
-|onboardingConfigId             |string                         |Yes|Merchant onboarding configuration ID that is configured in Paysafe.|
-|locale                         |string                         |No|Preferred [language/locale](#locale) for this application. Default is "en".|
-|applicationType                |enum                           |No|Describes the current status of the application. Default is INITIAL_APPLICATION. Possile values are:<ul><li>INITIAL_APPLICATION</li><li>ADD_LOCATION</li><li>ADD_ACCOUNT</li></ul>|
-|acceptTermsAndConditions       |boolean                        |No|True- This indicates that the merchant has accepted the terms and conditions. <br> False - Indicates that the merchant has not accepted the terms and conditions.|
+|onboardingConfigId             |string<br/>`length=6`          |Yes|Merchant onboarding configuration ID that is configured in Paysafe. For more details, refer to section [Prerequisites](#prereq)|
+|locale                         |string<br/>`length=2`          |No|Preferred [language/locale](#locale) for this application. Default is "en".|
+|[applicationType](merchantapplicationrequest)                |enum |No|Describes the current status of the application. Default is INITIAL_APPLICATION. Possile values are:<ul><li>INITIAL_APPLICATION</li><li>ADD_LOCATION</li><li>ADD_ACCOUNT</li></ul>|
+|[acceptTermsAndConditions](#submitapplication)       |boolean       |No|true- This indicates that the merchant has accepted the terms and conditions. <br> false - Indicates that the merchant has not accepted the terms and conditions.|
 |businessLegalEntity            |object                         |Yes|Array of [Business legal entity](#businessLegalEntityobject).|
-|addendum                       |map                            |No|Additional key-values.|
-|submit                         |boolean                        |Yes    |True - This indicates that the application is submitted and ready for further processing. <br> False - This indicates that the application is still in progress and not ready for further processing. <br> **Note**: If you set **submit=true**, then you will not be able to further update the application.|
-
-```apib
+|addendum                       |map                            |No|Additional key-values. You can add your own additional fields (up to 10) that are not relevant for underwriting.|
+|submit                         |boolean                        |Yes|true - This indicates that the application is submitted and ready for further processing. <br> false - This indicates that the application is still in progress and not ready for further processing. <br> **Note**: If you set **submit=true**, then you will not be able to further update the application.|
 
 
-DILIP
-
-
-````
 
 <a name="bacsbankaccountobject" title="BACS Bank Account Object"></a>
-## BACS Bank Account
+## BACS Bank Account (Applicable for UK Merchants Only)
 
-|Element                        |Type                       |Required |Description                        |
-|---                            |---                        |----|---       |
-|id                             |string<br/>`length<=36`    |Read Only  |This is the merchant's BACS bank account ID returned in the response.|
-|accountNumber                  |string<br/>`length=8`      |Yes        |This is the merchant's 8-digit bank account number.|
-|lastDigits                     |string<br/>`length=4`      |Read Only  |This is the last 4-digits of account number sent in response.|
-|beneficiaryAccountName         |string<br/>`length<=250`   |Yes        |This is the beneficiary's account name.|
-|beneficiaryBankCountry         |string<br/>`length=2`      |Yes        |This is the [country](#bacscountries) of the beneficiary bank's address.|
-|sortCode                       |string<br/>`length=6`      |Yes        |This is the 6-digit sort code of the merchant's bank account.|
+|Element                        |Type                       |Required|Description                        |
+|---                            |---                        |---|---       |
+|id                             |string<br/>`length<=36`    |Read Only|This is the merchant's BACS bank account ID returned in the response after some delay.|
+|accountNumber                  |string<br/>`length=8`      |Yes|This is the merchant's 8-digit bank account number.|
+|lastDigits                     |string<br/>`length=4`      |Read Only|This is the last 4-digits of account number sent in response.|
+|beneficiaryAccountName         |string<br/>`length<=250`   |Yes|This is the beneficiary's account name.|
+|beneficiaryBankCountry         |string<br/>`length=2`      |Yes|This is the [country](#bacscountries) of the beneficiary bank's address.|
+|sortCode                       |string<br/>`length=6`      |Yes|This is the 6-digit sort code of the merchant's bank account.|
 
 > **NOTE**: Access to bank accounts is assigned at different levels. You can control access to the bank accounts at various levels using hierarchy. If you create a bank account at the Business legal entity level, the bank account is attached to all the accounts under the BLE.
 Similarly, a bank account created at the location level is attached to all the accounts under that location. And If a bank account is created at the account level, it is attached to only that account.
@@ -809,15 +810,15 @@ Similarly, a bank account created at the location level is attached to all the a
 <a name="businessdetailsobject" title="Business Details Object"></a>
 |Element              |Type           |Required|Description                        |
 |---                  |---            |---|---       |
-|id                             |string<br/>`length<=36`    |Read Only|This is the ID returned in the response. It can be used later to look up or update a merchant.| 
-|tradeName                      |string<br/>`length<=240`   |Yes|DBA name of the business.|
+|id                             |string<br/>`length<=36`    |Read Only|This is the ID returned in the response after some delay. It can be used later to look up or update a merchant.| 
+|tradeName                      |string<br/>`length<=240`   |Yes|DBA name of the business. |
 |tradeAddress                   |object                     |No|Registered trade [address](#address)|
-|category                       |enum                       |Yes|This is the category code of the business. Please see [Merchant Category Codes](#merchantcategorycodes).|
+|category                       |enum                       |Yes|This is the category code of the business. See [Merchant Category Codes](#merchantcategorycodes). |
 |mcc                            |string <br/>`length=4`     |No|This is the merchant category code. This is required if the category is not mentioned.|
-|website                        |string                     |No|This is the business website of the merchant.|
+|website                        |string<br/>`length<=255`   |No|This is the business website of the merchant.|
 |phoneNumber                    |object                     |Yes|Details of the [phone number](#phonenumberobject)|
 |email                          |string<br/>`length<=240`   |Yes|This is the customer support email.|
-|users                          |array                      |DILIP|An array of [users](#userobject)|
+|users                          |array                      |Yes|An array of [users](#userobject)|
 |achBankAccount                 |object                     |Conditional|Details of [ACH Bank Account](#achbankaccountobject)|
 |bacsBankAccount                |object                     |Conditional|Details of [BACS Bank Account](#bacsbankaccountobject)|
 |eftBankAccount                 |object                     |Conditional|Details of [EFT Bank Account](#eftbankaccountobject)|
@@ -827,7 +828,7 @@ Similarly, a bank account created at the location level is attached to all the a
 |contacts                       |array                      |No|Array of [Contacts](#contactobject)|
 ```apib
 
-DILIP
+
 
 ```
 
@@ -836,13 +837,13 @@ DILIP
 |Element              |Type           |Required|Description                        |
 |---                  |---            |---|---       |
 |id                             |string<br/>`length<=36`    |Read Only|This is the ID returned in the response. It can be used later to look up or update a merchant.| 
-|type                           |enum                       |No|Type of business. For Possible values, please refer [Business Type Codes](#businesstypecodes).|
+|type                           |enum                       |No|Type of business. For Possible values, refer to [Business Type Codes](#businesstypecodes).|
 |legalName                      |string<br/>`length<=240`   |Yes|Registered legal name.|
-|registrationNumber             |string                     |No|Company's registration number.|
-|taxIdentificationNumber        |string                     |No|Company's Tax Identification Number.|
-|description                    |string                     |No|Company's business description.|
+|registrationNumber             |string<br/>`length<=255`   |No|Company's registration number.|
+|taxIdentificationNumber        |string<br/>`length<=255`   |No|Company's Tax Identification Number.|
+|description                    |string<br/>`length<=240`   |No|Company's business description.|
 |address                        |object                     |Yes|Registered legal [address](#address)|
-|users                          |array                      |DILIP|An array of [users](#userobject)|
+|users                          |array                      |Yes|An array of [users](#userobject)|
 |achBankAccount                 |object                     |Conditional|Details of [ACH Bank Account](#achbankaccountobject)|
 |bacsBankAccount                |object                     |Conditional|Details of [BACS Bank Account](#bacsbankaccountobject)|
 |eftBankAccount                 |object                     |Conditional|Details of [EFT Bank Account](#eftbankaccountobject)|
@@ -850,6 +851,8 @@ DILIP
 |wireBankAccount                |object                     |Conditional|Details of [Wire Bank Account](#wirebankaccountobject)|
 |principals                     |array                      |No|Array of [Principals](#principalobject)|
 |businessDetails                |array                      |Yes|Array of [Business Details](#businessdetailsobject).|
+
+**Note:** Principals is an array of objects (not a single principal object) and holds a few of the boolean properties for more than one principal. Therefore, a boolean property as 'true' or 'false' cannot be specified directly. 
 
 ```apib
 {
@@ -974,8 +977,8 @@ DILIP
     "principals": [
       {
         "title": "Mr",
-        "firstName": "Susumumu",
-        "lastName": "Hosoinon",
+        "firstName": "Sophia",
+        "lastName": "Loren",
         "middleName": null,
         "previousLastName": null,
         "dateOfBirth": {
@@ -1003,18 +1006,20 @@ DILIP
 }
 
 ```
+
+
 <a name= "contactobject" title="Contacts Object"></a>
 ## Contact
-|Element    |Type                       |Required |Description                        |
-|---        |---                        |---| ---      |
-|id         |string<br/>`length<=36`    |DILIP|This is the unique ID returned in the response. This ID can be used for future associated requests.|
-|type       |enum                       ||This indicates the type of the contact. Possible values are: <ul><li>SALES</li><li>BUSINESS</li><li>PRIMARY</li><li>CUSTOMER_SERVICE</li><li>TECH  </li></ul>|
-|title      |string                     ||This indicates gender or marital status. Possile values are: MR, MRS, MS.|
-|firstName  |string                     ||This is the first name of the business owner.|
-|middleName |string                     ||This is the middle name of the business owner.|
-|lastName   |string                     ||This is the last name of the business owner.|
-|email      |string                     ||This is the email address of the business owner.|
-|phoneNumber|object                     ||Details of the [phone number](#phonenumberobject)|
+|Element    |Type                       |Description                        |
+|---        |---                        |---       |
+|id         |string<br/>`length<=36`    |This is the unique ID returned in the response after some delay. This ID can be used for future associated requests.|
+|type       |enum                       |This indicates the type of the contact. Possible values are: <ul><li>SALES</li><li>BUSINESS</li><li>PRIMARY</li><li>CUSTOMER_SERVICE</li><li>TECH  </li></ul>|
+|title      |string<br/>`length<=3`     |This indicates gender or marital status. Possile values are: MR, MRS, MS.|
+|firstName  |string<br/>`length<=255`   |This is the first name of the business owner.|
+|middleName |string<br/>`length<=255`   |This is the middle name of the business owner.|
+|lastName   |string<br/>`length<=255`   |This is the last name of the business owner.|
+|email      |string<br/>`length<=50`    |This is the email address of the business owner.|
+|phoneNumber|object                     |Details of the [phone number](#phonenumberobject)|
 
 
 
@@ -1036,6 +1041,7 @@ DILIP
 }        
 ```
 
+
 <a name="dateobject" title="Date Object"></a>
 ## Date
 |Element    |Type                       |Required|Description                        |
@@ -1054,7 +1060,7 @@ DILIP
 ```
 
 <a name="eftbankaccountobject" title="EFT Bank Account Object"></a>
-## EFT Bank Account
+## EFT Bank Account (Applicable for Cananda Merchants Only)
 
 |Element                        |Type                       |Required|Description                        |
 |---                            |---                        |---|---       |
@@ -1063,7 +1069,7 @@ DILIP
 |lastDigits                     |string<br/>`length=4`      |Read Only|This is the last 4-digits of account number sent in response.|
 |transitNumber                  |string<br/>`length=5`      |Yes|This is the 5-digit transit number of the merchant's bank branch.|
 |institutionId                  |string<br/>`length=3`      |Yes|This is the 3-digit institution ID of the merchant's bank branch.|
-|paymentToken                   |string<br/>`length<=50`    |No|This is a token generated by Paysafe that represents the bank account.|
+|paymentToken                   |string<br/>`length<=50`    |No|This is a token generated by Paysafe that represents the bank account. |
 
 > **NOTE**: Access to bank accounts is assigned at different levels. You can control access to the bank accounts at various levels using hierarchy. If you create a bank account at the Business legal entity level, the bank account is attached to all the accounts under the BLE.
 Similarly, a bank account created at the location level is attached to all the accounts under that location. And If a bank account is created at the account level, it is attached to only that account.
@@ -1087,7 +1093,7 @@ Similarly, a bank account created at the location level is attached to all the a
 |isDirector     |boolean                        |No|This indicates whether this person is the director of the business entity.|
 |isApplicant    |boolean                        |No|This indicates whether this person is the applicant of the merchant account.|
 |isControlProng |boolean                        |No|This indicates whether this person is the Control Prong. |
-|title          |string                         |No|This indicates the profession or marital status. Possible values are: MR, MRS, MS, Jr, Dr.|
+|title          |string<br/>`length<=3`         |No|This indicates the profession or marital status. Possible values are: MR, MRS, MS, Jr, Dr.|
 |firstName      |string<br/>`length<=50`        |No|This is the first name of the business owner.|
 |middleName     |string<br/>`length<=50`        |No|This is the middle name of the business owner.|
 |lastName      |string<br/>`length<=50`         |No|This is the last name of the business owner.|
@@ -1096,11 +1102,11 @@ Similarly, a bank account created at the location level is attached to all the a
 |dateOfBirth    |object                         |No|Details of the [Date of birth](#dateobject)|
 |nationality    |enum                           |No|This is the nationality code of the business owner.<br/>  **Note:** This is used for European business owners only.<br/> See [Nationality Codes](#nationalitycodes).|
 |type           |enum                           |No|Possible values are: <ul><li>OWNER</li><li>DIRECTOR</li><li>TRUSTEE</li><li>PARTNER</li><li>SENIOR_MANAGER</li><li>CONTROL_PRONG</li></ul>|
-|ssn            |string<br/>`length<=9`         |No|This is the Social Security Number of the person.|
-|sinLastFour    |string<br/>`length<=9`         |Read Only|This is the last 4-digits of SSN sent in response.|
-|sin            |string<br/>`length<=9`         |No|This is the Social Insurance Number of the person.|
-|sinLastFour    |string<br/>`length<=9`         |Read Only|This is the last 4-digits of SIN sent in response.|
-|positionInCompany|string<br/>`length<=50`        |No|This is the position of the person in the company.|
+|ssn            |string<br/>`length<=9`         |No|This is the Social Security Number of the person. |
+|ssnLastFour    |string<br/>`length=4`         |Read Only|This is the last 4-digits of SSN sent in response.|
+|sin            |string<br/>`length<=9`         |No|This is the Social Insurance Number of the person. |
+|sinLastFour    |string<br/>`length=4`         |Read Only|This is the last 4-digits of SIN sent in response.|
+|positionInCompany|string<br/>`length<=50`        |No|This is the position of the person in the company. |
 |percentageShareholding    |number<br/>`max=100`   |No|This is the percentage of ownership by the business owner.|
 
 ```apib
@@ -1140,8 +1146,8 @@ Similarly, a bank account created at the location level is attached to all the a
 ## phoneNumber
 |Element                        |Type                       |Required|Description                        |
 |---                            |---                        |---|---       |
-|id                             |string<br/>`length<=36`    |Read Only|This is the unique ID returned in the response. This ID can be used for future associated requests.|
-|countryCode                    |string                     |Yes|This is the country code of customer support phone number.|
+|id                             |string<br/>`length<=36`    |Read Only|This is the unique ID returned in the response after some delay. This ID can be used for future associated requests.|
+|countryCode                    |string<br/>`length<=3`     |Yes|This is the country code of customer support phone number.|
 |number                         |string <br/>`length=10`    |Yes|This is the Customer support phone number.|
 
 ```apib
@@ -1151,15 +1157,16 @@ Similarly, a bank account created at the location level is attached to all the a
   "number": "466441111"
 }
 ```
+**Note:** The length of phone number is 10 for the US region; for EU region it should be less than or equal to 12. 
 
 <a name="processingoptionobject" title="Processing Option Object"></a>
 ## processingOption
-|Element                        |Type                       |Required|Description                        |
-|---                            |---                        |---|---       |
-|id                             |string<br/>`length<=36`    |Read Only|This is the unique ID returned in the response. This ID can be used for future associated requests.|
-|cardType                       |string                     |No|This is the type of card used. Possible values are:<br/><ul><li>AM &ndash; American Express</li><li>DI &ndash; Discover</li><li>JC &ndash; JCB</li><li>MC &ndash; Mastercard</li><li>MD &ndash; Maestro</li><li>SO &ndash; Solo</li><li>VI &ndash; Visa</li><li>VD &ndash; Visa Debit</li><li>VE &ndash; Visa Electron</li></ul>|
-|mid                            |string                     |Yes|MID to be used for specific card types.|
-|tids                           |array                      |Yes|This is an array of string. TIDS to be used for specific card types.|
+|Element                        |Type                       |Description                        |
+|---                            |---                        |---       |
+|id                             |string<br/>`length<=36`    |This is the unique ID returned in the response after some delay. This ID can be used for future associated requests.|
+|cardType                       |string<br/>`length=2`      |This is the type of card used. Possible values are:<br/><ul><li>AM &ndash; American Express</li><li>DI &ndash; Discover</li><li>JC &ndash; JCB</li><li>MC &ndash; Mastercard</li><li>MD &ndash; Maestro</li><li>SO &ndash; Solo</li><li>VI &ndash; Visa</li><li>VD &ndash; Visa Debit</li><li>VE &ndash; Visa Electron</li></ul>|
+|mid                            |string<br/>`length 1 to 24`|MID to be used for specific card types. This is an optional field|
+|tids                           |array                      |This is an array of string. TIDS to be used for specific card types. This is an optional field|
 
 ```apib
 {
@@ -1172,16 +1179,16 @@ Similarly, a bank account created at the location level is attached to all the a
 
 
 <a name="sepabankaccountobject" title="SEPA Bank Account Object"></a>
-## SEPA Bank Account
+## SEPA Bank Account (Applicable for EU Merchants Only)
 
-|Element                        |Type                       |Required|Description                        |
-|---                            |---                        |---|---       |
-|id                             |string<br/>`length<=36`    |Read Only|This is the merchant's SEPA bank account ID returned in the response.|
-|beneficiaryAccountName         |string<br/>`length<=250`   |Yes|This is the beneficiary's account name.|
-|swiftNumber                    |string<br/>`length=8 or 11`|Yes|This is the Swift code of the merchant's bank account. Alphanumeric characters only.|
-|ibanNumber                     |string<br/>`length=15-32`  |Yes|This is the IBAN of the merchant's bank account. Alphanumeric characters only.|
-|lastDigits                     |string<br/>`length=4`      |Read Only|This is the last 4-digits of account number sent in response.|
-|beneficiaryBankCountry         |string<br/>`length=2`      |Yes|This is the [country](#sepacountries) of the beneficiary bank's address.|
+|Element                        |Type                       |Description                        |
+|---                            |---                        |---       |
+|id                             |string<br/>`length<=36`    |This is the merchant's SEPA bank account ID returned in the response.|
+|beneficiaryAccountName         |string<br/>`length<=250`   |This is the beneficiary's account name.|
+|swiftNumber                    |string<br/>`length=8 or 11`|This is the Swift code of the merchant's bank account. Alphanumeric characters only.|
+|ibanNumber                     |string<br/>`length=15-32`  |This is the IBAN of the merchant's bank account. Alphanumeric characters only.|
+|lastDigits                     |string<br/>`length=4`      |This is the last 4-digits of account number sent in response.|
+|beneficiaryBankCountry         |string<br/>`length=2`      |This is the [country](#sepacountries) of the beneficiary bank's address.|
 
 > **NOTE**: Access to bank accounts is assigned at different levels. You can control access to the bank accounts at various levels using hierarchy. If you create a bank account at the Business legal entity level, the bank account is attached to all the accounts under the BLE.
 Similarly, a bank account created at the location level is attached to all the accounts under that location. And If a bank account is created at the account level, it is attached to only that account.
@@ -1198,10 +1205,10 @@ Similarly, a bank account created at the location level is attached to all the a
 ```
 <a name="statementdescriptorobject" title="Statement Descriptor Object"></a>
 ## statementDescriptor
-|Element                        |Type                       |Required|Description                        |
-|---                            |---                        |---|---       |
-|descriptor                     |string<br/>`length=240`    |No|This is the descriptor of the DBA that appears on the card statement.|
-|phone                          |string<br/>`length=10`     |No|This is the phone number of the account. This cannot contain special characters.|
+|Element                        |Type                       |Description                        |
+|---                            |---                        |---       |
+|descriptor                     |string<br/>`length<=240`    |This is the descriptor of the DBA that appears on the card statement.|
+|phone                          |string<br/>`length=10`     |This is the phone number of the account. This cannot contain special characters.|
 
 ```apib
  {
@@ -1213,50 +1220,51 @@ Similarly, a bank account created at the location level is attached to all the a
 <a name="usersobject" title="Users Object"></a>
 ## Users
 
-|Element    |Type                       |Required|Description                        |
-|---        |---                        |---|---       |
-|id         |string<br/>`length<=36`    |Read Only|This is the unique ID returned in the response. This ID can be used for future associated requests.|
-|email      |string<br/>`length<=255`   |Yes|This is the email address that will be associated with the user.|
-|fullName   |string                     |Yes|This is the full name of the user.|
-|loginName  |string<br/>`length=2-31`   |Yes|This is the user name that will be configured to access the merchant account in the Merchant Back Office.|
-|password   |string<br/>`length<=17`    |Yes|This is the password that the user will use to access the merchant account in the Merchant Back Office.|
+|Element    |Type                       |Description                        |
+|---        |---                        |---       |
+|id         |string<br/>`length<=36`    |This is the unique ID returned in the response after some delay. This ID can be used for future associated requests.|
+|email      |string<br/>`length<=255`   |This is the email address that will be associated with the user.|
+|fullName   |string<br/>`length<=255`   |This is the full name of the user.|
+|loginName  |string<br/>`length=2-31`   |This is the user name that will be configured to access the merchant account in the Merchant Back Office.|
+|password   |string<br/>`length<=17`    |This is the password that the user will use to access the merchant account in the Merchant Back Office.|
 
 > **NOTE**: Users are individuals that need access at different levels.  You control user access at various levels using hierarchy. If you create a user at the Business legal entity level, the user will have access to all the accounts and locations created for the BLE. 
 Similarly, a user created at the location level will have access to all accounts under it. And If users are created at account level, they will have access to only that account. 
 
 ```apib
 {
-  "id": "user-112", 
+  "id": "user-112",
+  "email": "bleemail_27216@gmail.com",
+  "fullName": "bleusername_27216",
   "loginName":"sam_smith",
   "password":"Pwd1234",
-  "email":"samsmith@email.com"
   }
 ```
 
 <a name="wirebankaccountobject" title="Wire Bank Account Object"></a>
 ## Wire Bank Account
 
-|Element            |Type                       |Required|Description                        |
-|---                |---                        |---|---    |
-|id                 |string<br/>`length<=36`    |Read Only|This is the merchant's wire bank account ID returned in the response.|
-|accountNumber      |string<br/>`length=2-30`   |Yes|This is the merchant's bank account number.|
-|lastDigits         |string<br/>`length=4`      |Read Only|This is the last 4-digits of the account number sent in response.|
-|routingNumber      |string<br/>`length=1-12`   |No|This is the routing number of the merchant's bank account.|
-|sortCode           |string<br/>`length=6`      |No|This is the 6-digit sort code of the merchant's bank account.|
-|swiftNumber        |string<br/>`length=8 or 11`|Yes|This is the Swift code of the merchant's bank account. Alphanumeric characters only.|
-|ibanNumber         |string<br/>`length=15-32`  |No|This is the IBAN of the merchant's bank account. Alphanumeric characters only.|
-|beneficiaryCountry |string<br/>`length=2`      |Yes|This is the country of the beneficiary's address. See [Country Codes](#countrycodes).
-|beneficiaryAccountName |string<br/>`length<=250`|Yes|This is the beneficiary account name.|
-|beneficiaryAddress |string<br/>`length<=100`   |Yes|This is the beneficiary's address.|
-|beneficiaryCity    |string<br/>`length<=40`    |Yes|This is the beneficiary's city.|
-|beneficiaryRegion  |string<br/>`length<=40`    |Yes|This is the beneficiary's region.|
-|beneficiaryPostCode    |string<br/>`length<=10`   |Yes|This is the beneficiary's post code.|
-|beneficiaryBankCountry |string<br/>`length=2`  |Yes|This is the [country](#countrycodes) of the beneficiary bank's address.|
-|beneficiaryBankName    |string<br/>`length<=100`   |Yes|This is the name of the beneficiary's bank.|
-|beneficiaryBankAddress |string<br/>`length<=100`   |Yes|This is the street of the beneficiary's bank address.|
-|beneficiaryBankCity    |string<br/>`length<=40` |Yes|This is the city of the beneficiary's bank.|
-|beneficiaryBankRegion  |string<br/>`length<=40` |Yes|This is the region of the beneficiary's bank. |
-|beneficiaryBankPostCode    |string<br/>`length<=10`   |Yes|This is the postcode of the beneficiary's bank.|
+|Element            |Type                       |Description                        |
+|---                |---                        |---    |
+|id                 |string<br/>`length<=36`    |This is the merchant's wire bank account ID returned in the response.|
+|accountNumber      |string<br/>`length=2-30`   |This is the merchant's bank account number.|
+|lastDigits         |string<br/>`length=4`      |This is the last 4-digits of the account number sent in response.|
+|routingNumber      |string<br/>`length=1-12`   |This is the routing number of the merchant's bank account.|
+|sortCode           |string<br/>`length=6`      |This is the 6-digit sort code of the merchant's bank account.|
+|swiftNumber        |string<br/>`length=8 or 11`|This is the Swift code of the merchant's bank account. Alphanumeric characters only.|
+|ibanNumber         |string<br/>`length=15-32`  |This is the IBAN of the merchant's bank account. Alphanumeric characters only.|
+|beneficiaryCountry |string<br/>`length=2`      |This is the country of the beneficiary's address. See [Country Codes](#countrycodes).
+|beneficiaryAccountName |string<br/>`length<=250`    |This is the beneficiary's account name.|
+|beneficiaryAddress |string<br/>`length<=100`   |This is the beneficiary's address.|
+|beneficiaryCity    |string<br/>`length<=40`    |This is the beneficiary's city.|
+|beneficiaryRegion  |string<br/>`length<=40`    |This is the beneficiary's region.|
+|beneficiaryPostCode    |string<br/>`length<=10`   |This is the beneficiary's postcode.|
+|beneficiaryBankCountry |string<br/>`length=2`  |This is the [country](#countrycodes) of the beneficiary bank's address.|
+|beneficiaryBankName    |string<br/>`length<=100`   |This is the name of the beneficiary's bank.|
+|beneficiaryBankAddress |string<br/>`length<=100`   |This is the street of the beneficiary's bank address.|
+|beneficiaryBankCity    |string<br/>`length<=40` |This is the city of the beneficiary's bank.|
+|beneficiaryBankRegion  |string<br/>`length<=40` |This is the region of the beneficiary's bank. |
+|beneficiaryBankPostCode    |string<br/>`length<=10`   |This is the postcode of the beneficiary's bank.|
 
 > **NOTE**: Access to bank accounts is assigned at different levels. You can control access to the bank accounts at various levels using hierarchy. If you create a bank account at the Business legal entity level, the bank account is attached to all the accounts under the BLE.
 Similarly, a bank account created at the location level is attached to all the accounts under that location. And If a bank account is created at the account level, it is attached to only that account.
@@ -1749,7 +1757,7 @@ Similarly, a bank account created at the location level is attached to all the a
 
 ### EU &ndash; Credit Card Processing
 
-**Note:** Some of the countries may not be supported, based on your configuration. Please contact your account manager for more information. 
+**Note:** Some of the countries may not be supported, based on your configuration. Contact your account manager for more information. 
 
 | Country                    | Code |
 |---                    |--- |
@@ -1903,19 +1911,18 @@ This call returns a status of READY if the API is available.
 
 ## Create Application [/merchant/v1/applications]
 
-Create Application allows you to create a new Application request for merchant onboarding. It also allows you to add a new location or account to an application.
+Create Application allows you to create a new Application request for merchant onboarding. Click **Create an Application** tab below to see an example of how to create a new application for a merchant:
 <br>
 
-### Create an Application [POST]
+### Create an Application for Initial Merchant Account [POST]
 <a name="merchantapplicationrequest" title="Create an application"></a>
-
-Click **Create an Application** above to see the three examples of how to create a new Application for a merchant:
-
 * This is an INITIAL Merchant Account creation request.
-* This is how you add a new LOCATION to an already existing merchant account. To add a new LOCATION to a merchant account, *type* should be *ADDITIONAL_LOCATION*.
-* This is how you add a new ACCOUNT to an already existing merchant account. To add a new ACCOUNT to a merchant account, *type* should be *ADDITIONAL_ACCOUNT*.
 
- > **Note:** Set submit=true only when your application is ready for final processing. Once you set submit=true, you will not be able to make further changes. If your application is not fully complete and you want to revisit to edit details later, then set submit=false.        
+For more information on other common objects used, refer to the section [Complex JSON Objects](#accountobject). To know how to submit a merchant application, refer to the section [Submit Merchant Application](submitapplication)
+
+ > **Note:** If you set *submit=true*, then you will not be able to update the application further. <br>
+ > **Note:** If you want to submit the Initial application at one go, set *submit=true* in the request. <br>
+ > **Note:** If the merchant wants to save the application and provide further information later, set *submit=false* in the request.<br> Once you are ready to submit the application for further processing, set *submit=true* in a PATCH request.<br>
 
 + Attributes 
     + Include ConslidatedApplicationObject
@@ -2616,13 +2623,27 @@ Click **Create an Application** above to see the three examples of how to create
 
 
 
-+ Request Add a new LOCATION to a merchant account creation request (application/json)
+
+### Create an Application for a New Location [POST]
+<a name="merchantlocationrequest" title="Create an new location"></a>
+
+Click **Create an Application for a New Location** above to see an example of how to create an application for a new location:
+
+* This is how you add a new LOCATION to an already existing merchant account. To add a new LOCATION to a merchant account, the parameter *type* should be *ADDITIONAL_LOCATION*. Location here refers to a website. For instance, as a merchant you use this when you plan to integrate Paysafe's payment method in one of your new websites. 
+
+For more information on other common objects used, refer to the section [Complex JSON Objects](#accountobject). To know how to submit a merchant application, refer to the section [Submit Merchant Application](submitapplication)
+
+
++ Attributes 
+    + Include ConslidatedApplicationObject
+
++ Request Create Application for a New LOCATION (application/json)
 
     + Headers
 
             Authorization: "Basic YOUR-BASE64-ENCODED-API-KEY"
             Simulator: "EXTERNAL"
-            
+
     + Body
 
             {
@@ -3137,13 +3158,25 @@ Click **Create an Application** above to see the three examples of how to create
             }
 
 
-+ Request Add a new ACCOUNT to a merchant account creation request (application/json)
+### Create an Application for a New Account [POST]
+<a name="merchantaccountrequest" title="Create an new account"></a>
+
+Click **Create an Application for a New Account** above to see an example of how to create an application for a new account:
+
+* This is how you add a new ACCOUNT to an already existing merchant account. To add a new ACCOUNT, the parameter *type* should be *ADDITIONAL_ACCOUNT*. For instance, you add a new account when you want to accept a new currency (either processing or payout currency) as part of your payment processing.  
+
+For more information on other common objects used, refer to the section [Complex JSON Objects](#accountobject). To know how to submit a merchant application, refer to the section [Submit Merchant Application](submitapplication)
+
++ Attributes 
+    + Include ConslidatedApplicationObject
+
++ Request Create Application for a New ACCOUNT (application/json)
 
     + Headers
 
             Authorization: "Basic YOUR-BASE64-ENCODED-API-KEY"
             Simulator: "EXTERNAL"
-            
+
     + Body
 
             {
@@ -3372,15 +3405,13 @@ Click **Create an Application** above to see the three examples of how to create
             }
             }
 
-## Look Up Application [/merchant/v1/applications/{appId}]
+## Get Merchant Application [/merchant/v1/applications/{appId}]
 
-Look Up Application allows you to retrieve an Application request.
+Get Merchant Application allows you to retrieve an Application request. Click the **Search for a Merchant** tab below to search for a merchant application. 
 <br>
 
-### Look Up a Merchant [GET]
+### Search for a Merchant [GET]
 <a name="getmerchantapplication" title="Look Up a Merchant Application"></a>
-
-This is how you look up a merchant application.
 
 + Parameters
 
@@ -3462,6 +3493,7 @@ This is how you look up a merchant application.
                             },
                             "accounts": [
                                 {
+                                    "Id": "100001443"
                                     "paymentType": "CARD",
                                     "currency": "CAD",
                                     "settlementCurrency": "CAD",
@@ -3694,7 +3726,7 @@ Update Application allows you to modify an Application request for merchant onbo
 
 This is how you update a merchant application with a PUT request.
 
-**Note:** You must provide all the elements of the merchant application that you want to update. Elements not included will be removed from the resulting merchant application.
+**Note:** When updating your application, you must provide information related to all the fields in your merchant application even if only a few fields are changing. This is because Paysafe will update all the fields as part of the PUT request.  
 
 + Parameters
 
@@ -4273,12 +4305,12 @@ This is how you update a merchant application with a PUT request.
 
 ## Get Terms and Conditions [/merchant/v1/applications/{appId}/termsandconditions]
 
-"Get Terms and Conditions" downloads a PDF version of the Terms and Conditions.
+Get Terms and Conditions returns a PDF version of the terms and conditions. To obtain the terms and conditions in a PDF file, click the tab below, "Get Terms and Conditions":
 <br>
 ### Get Terms and Conditions [GET]
 <a name="gettermsandconditions" title="Get Terms and Conditions"></a>
 
-This is how you get the Terms and Conditions in a PDF file.
+.
 
 + Parameters
 
@@ -4297,15 +4329,15 @@ This is how you get the Terms and Conditions in a PDF file.
 
 ## Submit Application [/merchant/v1]
 
-Submit Application allows you to submit an Application request for merchant onboarding for further processing.
+Submit Application allows you to submit an Application request for merchant onboarding for further processing. To know how to submit a merchant application request, click the tab below, "Submit Merchant Application":
 <br>
 
 ### Submit a Merchant Application [PATCH /merchant/v1/applications/{appId}]
 <a name="submitapplication" title="Submit Merchant Appication"></a>
 
-This is how you submit a merchant application request.
 
-**Note:** You cannot make changes after you successfully submit the application.
+
+**Note:** When the merchant application is successfully submitted, you cannot make any further changes in the application.
 
 + Parameters
 
@@ -4314,8 +4346,8 @@ This is how you submit a merchant application request.
 + Request Merchant Account Activation (application/json)
 
      + Attributes
-        + acceptTermsAndConditions: `true` (boolean) - True- This indicates that the merchant has accepted the terms and conditions. False - Indicates that the merchant has not accepted the terms and conditions.
-        + submit: `true` (boolean) - True - This indicates that the application is prepared to be submitted and ready for further processing. False - This indicates that the application is still in progress and not ready for further processing.
+        + acceptTermsAndConditions: `true` (boolean) - true- This indicates that the merchant has accepted the terms and conditions. false - Indicates that the merchant has not accepted the terms and conditions.
+        + submit: `true` (boolean) - true - This indicates that the application is prepared to be submitted and ready for further processing. false - This indicates that the application is still in progress and not ready for further processing.
             _If you set submit=true, then you will not be able to further update the application._
 
     + Headers
@@ -4582,36 +4614,29 @@ This is how you submit a merchant application request.
                 ]
             }
             }
+
  
 # Data Structures
 
 ## Accounts
 + `accounts` (object) : An array of accounts.
     + Properties
-        + id: `100101010` (string) - This is the unique ID returned in the response. This ID can be used for future associated requests.
-            _Read Only_
-        + `paymentType`: `CARD` (enum) - This is the payment type associated with the Payment Handle used for this request.
-            _Optional_
+        + id: `100101010` (string) - This is the unique ID returned in the response after some delay. This ID can be used for future associated requests.
+        + `paymentType`: `CARD` (enum) - This is the payment type associated with this request. Possible values are:
             + Members
                 + CARD
                 + DD
         + currency: `CAD` (string) - Supported currency for the account. You can use only Paysafe configured currencies. See [Supported Currency Codes](#supportedcurrencycodes).
-            _Mandatory_
         + settlementCurrency: USD` (string) - This is the currency selected by the merchant for payout. You can use only Paysafe configured currencies. See [Supported Currency Codes](#supportedcurrencycodes).
-            _Optional_
         + `statementDescriptor` (object) 
             + Properties
                 + descriptor : `WELLVERSED GOODS PVT` (string) - This is the descriptor of the DBA that appears on the card statement.
-                    _Optional_
                 + phone: `555 888-9999` (string) - This is the phone number of the account. This cannot contain special characters.
-                    _Optional_
         + terminalType: `MOTO` (enum) - Mode of transaction. 
-            _Mandatory_
             + Members
                 + MOTO - Telephonic authentication or IVRS support
                 + ECOM - E-commerce transaction
         + cardTypes: `AM` (enum) - This is the type of card used.
-            _Mandatory_
             + Members
                 + AM -  American Express
                 + DI - Discover
@@ -4624,10 +4649,8 @@ This is how you submit a merchant application request.
                 + VE - Visa Electron
         + `processingOptions` (object)
             + Properties
-                + id: `po-1111` (string) - This is the unique ID returned in the response. This ID can be used for future associated requests.
-                    _Read Only_
+                + id: `po-1111` (string) - This is the unique ID returned in the response after some delay. This ID can be used for future associated requests.
                 + cardType: `AM` (enum) - This is the type of card used.
-                    _Optional_
                     + Members
                         + AM -  American Express
                         + DI - Discover
@@ -4638,10 +4661,8 @@ This is how you submit a merchant application request.
                         + VI - Visa
                         + VD - Visa Debit
                         + VE - Visa Electron
-                + mid: `454545` (string) - MID to use for specified card types.
-                    _Mandatory_
+                + mid: `454545` (string) - MID to be used for specific card types.
                 + tids: `8989` (array) - This is an array of string. TIDS to be used for specific card types.
-                    _Mandatory_
         + Include ACH Bank Account
         + Include BACS Bank Account
         + Include EFT Bank Account
@@ -4652,66 +4673,44 @@ This is how you submit a merchant application request.
 ## Address 
 + `address` (object) : Details of the address.
     + Properties
-        + id: `address-1111` (string) This is the unique ID returned in the response. This ID can be used for future associated requests.
-            _Read Only_
-        + street: `100 Queen Street West` (string) - This is the first line of the street address.
-            _Optional_
-        + street2: `Apt. 245` (string) - This is the second line of the street address.
-            _Optional_
-        + city: `Toronto` (string) - This is the city where the address is located.
-            _Optional_
-        + state: `ON` (string) - This is the state/province/region of the address. For Canada see [Province Codes](#provincecodes). For US see [State Codes](#statecodes).
-            _Mandatory_
-        + country: `CA` (string) - This is the [country code](#countrycodes) of the address.
-            _Mandatory_
-        + zip: `M5H 2N2` (string) - This is the zip/postal code of the address. This cannot contain special characters.
-            _Optional_
+        + id: `address-1111` (string) This is the unique ID returned in the response after some delay. This ID can be used for future associated requests.
+        + street: `100 Queen Street West` (string, required) - This is the first line of the street address.
+        + street2: `Apt. 245` (string, optional) - This is the second line of the street address.
+        + city: `Toronto` (string, required) - This is the city where the address is located.
+        + state: `ON` (string, required) - This is the state/province/region of the address. For Canada see [Province Codes](#provincecodes). For US see [State Codes](#statecodes).
+        + country: `CA` (string, required) - This is the [country code](#countrycodes) of the address.
+        + zip: `M5H 2N2` (string, required) - This is the zip/postal code of the address. This cannot contain special characters.
 
 ## ACH Bank Account
 + `achBankAccount` (object) : Details of the ACH Bank Account.
     + Properties
         + id: `e84ea1` (string) - This is the merchant's ACH bank account ID returned in the response.
-            _Read Only_
         + lastDigits: `3954` (string) - This is the last 4-digits of the account number sent in response.
-            _Read Only_
-        + accountNumber: `5807560412853954` (string) - This is the merchant's bank account number.
-            _Mandatory_
-        + routingNumber: `854117563` (string) - This is the 9-digit routing number of the merchant's bank account.
-            _Mandatory_
+        + accountNumber: `5807560412853954` (string, required) - This is the merchant's bank account number.
+        + routingNumber: `854117563` (string, required) - This is the 9-digit routing number of the merchant's bank account.
 
 ## BACS Bank Account
 + `bacsBankAccount` (object) : Details of the BACS Bank Account.
     + Properties
         + id: `e84gc1` (string) - This is the merchant's BACS bank account ID returned in the response.
-            _Read Only_
-        + accountNumber: `94001521` (string) - This is the merchant's 8-digit bank account number.
-            _Mandatory_
+        + accountNumber: `94001521` (string, required) - This is the merchant's 8-digit bank account number.
         + lastDigits: `1521` (string) - This is the last 4-digits of account number sent in response.
-            _Read Only_
-        + beneficiaryAccountName: `Main` (string) - This is the beneficiary's account name.
-            _Mandatory_
-        + beneficiaryBankCountry: `GB` (string) - This is the [country](#bacscountries) of the beneficiary bank's address.
-            _Mandatory_
-        + sortCode: `857412` (string) - This is the 6-digit sort code of the merchant's bank account.
-            _Mandatory_
+        + beneficiaryAccountName: `Main` (string, required) - This is the beneficiary's account name.
+        + beneficiaryBankCountry: `GB` (string, required) - This is the [country](#bacscountries) of the beneficiary bank's address.
+        + sortCode: `857412` (string, required) - This is the 6-digit sort code of the merchant's bank account.
 
 ## Business Legal Entity
 + `businessLegalEntity` (object) - Registered legal entity details.
     + Properties
-        + id: `e84ec16a-ec09-493f-9986-bc0aff2c6b23` (string) - This is the unique ID returned in the response. This ID can be used for future associated requests.
+        + id: `e84ec16a-ec09-493f-9986-bc0aff2c6b23` (string) - This is the ID returned in the response. It can be used later to look up or update a merchant.
             _Read Only_
-        + type: `Ltd` (enum) - Type of business. For Possible values, please refer [Business Type Codes](#businesstypecodes).
-            _Optional_
-        + legalName: `Isuzu Motors Ltd` (string) - Registered legal name.
-            _Mandatory, length<=240_
-        + registrationNumber: `F01011` (string) - Company's registration number.
-            _Optional_
-        + taxIdentificationNumber: `TAX123456` (string) - Company's Tax Identification Number.
-            _Optional_
-        + description: `Diesel motors and vehicles` (string) - Company's business description.
-            _Optional_
+        + type: `Ltd` (enum) -  For Possible values, refer to [Business Type Codes](#businesstypecodes).
+        + legalName: `Isuzu Motors Ltd` (string,required) - Registered legal name.
+            _length<=240_
+        + registrationNumber: `F01011` (string, optional) - Company's registration number.
+        + taxIdentificationNumber: `TAX123456` (string, optional) - Company's Tax Identification Number.
+        + description: `Diesel motors and vehicles` (string, optional) - Company's business description.
         + Include Address
-            _Mandatory_
         + Include User
         + Include ACH Bank Account
         + Include BACS Bank Account
@@ -4720,29 +4719,21 @@ This is how you submit a merchant application request.
         + Include Wire Bank Account
         + Include Principals
         + Include Business Details
-            _Mandatory_
 
 ## Business Details
 + `businessDetails` (object):  Array of Business Details.
     + Properties
-        +  id: `bd-1111` (string) - This is the unique ID returned in the response. This ID can be used for future associated requests.
+        +  id: `bd-1111` (string) - This is the ID returned in the response. It can be used later to look up or update a merchant.
             _Read Only_
-        + tradeName: `Good Office Services USA` (string) - DBA name of the business.
-            _Mandatory_
+        + tradeName: `Good Office Services USA` (string, required) - DBA name of the business.
         + `tradeAddress` (object) - Registered Trade address.
-            _Optional_
             + Properties
                 + Include Address
-        + category: `offline` (enum) - This is the category code of the business. Please see [Merchant Category Codes](#merchantcategorycodes).
-            _Mandatory_
+        + category: `offline` (enum) - This is the category code of the business. See [Merchant Category Codes](#merchantcategorycodes).
         + mcc: `4678` (string) - This is the merchant category code. This is required if the category is not mentioned.
-            _Optional_
         + website: `https://goodoffice.us` (string) - This is the business website of the merchant.
-            _Optional_
         + Include Phone Number
-            _Mandatory_
         + email: `support@goodoffice.us` (string) - This is the customer support email.
-            _Mandatory_
         + Include User
         + Include ACH Bank Account
         + Include BACS Bank Account
@@ -4750,126 +4741,83 @@ This is how you submit a merchant application request.
         + Include SEPA Bank Account
         + Include Wire Bank Account
         + Include Accounts
-            _Mandatory_
         + Include Contacts
-            _Mandatory_
 
 ## ConslidatedApplicationObject
-+ id:`100001556` (string) - This is the unique ID returned in the response. It can be used later to look up or update a merchant.
-    _Read Only_
-+ name:`XYZ` (string) - This is the suitable name given to the application.
-    _Optional_
-+ merchantRefNum: `merchantRefNum8` (string) - The merchant's unique identifier for this request.
-    _Mandatory_
-+ onboardingConfigId: `224112` (string) - Merchant onboarding configuration ID that is configured in Paysafe.
-    _Mandatory_
-+ locale: `en` (string) -  Preferred [language/locale](#locale) for this application. Default is "en".
-    _Optional_
-+ applicationType: `INITIAL_APPLICATION` (enum) - Describes the current status of the application. Default is INITIAL_APPLICATION. 
-    _Optional_
++ id:`100001556` (string, required) - This is the unique ID returned in the response after some delay. It can be used later to look up or update a merchant.
++ name:`XYZ` (string, optional) - This is the suitable name given to the application.
++ merchantRefNum: `merchantRefNum8` (string, required) - The merchant's unique identifier for this request.
++ onboardingConfigId: `224112` (string, required) - Merchant onboarding configuration ID that is configured in Paysafe.
++ locale: `en` (string, optional) - Preferred [language/locale](#locale) for this application. Default is "en".
++ applicationType: `INITIAL_APPLICATION` (enum, optional) - Describes the current status of the application. Default is INITIAL_APPLICATION. 
     + Members
         + INITIAL_APPLICATION - This denotes a fresh new application
         + ADD_LOCATION - Add a new location to an existing application
         + ADD_ACCOUNT - Add a new account to an existing application
-+ acceptTermsAndConditions: `true` (boolean) - True- This indicates that the merchant has accepted the terms and conditions. False - Indicates that the merchant has not accepted the terms and conditions.
-    _Optional_
++ acceptTermsAndConditions: `true` (boolean, optional) - True- This indicates that the merchant has accepted the terms and conditions. false - Indicates that the merchant has not accepted the terms and conditions.
 + Include Business Legal Entity
-+ addendum: `` (string) - Additional key-values.
-    _Optional, length=10_
-+ submit: `true` (boolean) - rue - This indicates that the application is submitted and ready for further processing. False - This indicates that the application is still in progress and not ready for further processing.
-    _Optional_
-
++ addendum: `` (string, optional) - Additional key-values.
+    _length=10_
++ submit: `true` (boolean) - True - This indicates that the application is submitted and ready for further processing. false - This indicates that the application is still in progress and not ready for further processing.
 
 ## Contacts
 + `contacts` (object) - Array of Contacts.
     + Properties
-        + id:  `e84gc1` (string) - This is the unique ID returned in the response. This ID can be used for future associated requests.
-            _Read Only_
-        + type: `SALES` (enum) - This indicates the type of the contact.  
-            _Optional_
+        + id:  `e84gc1` (string) - This is the unique ID returned in the response after some delay. This ID can be used for future associated requests.
+        + type: `SALES` (enum) - This indicates the type of contact.  
             + Members
                 + SALES
                 + BUSINESS
                 + PRIMARY
                 + CUSTOMER_SERVICE
                 + TECH
-        + title: `MR` (enum) - This indicates gender or marital status. Possile values are: MR, MRS, MS.
-            _Optional_
+        + title: `MR` (enum) - This indicates gender or marital status. Possible values are: MR, MRS, MS.
         + firstName: `James` (string) - This is the first name of the business owner.
-            _Mandatory_
         + middleName: `Robert` (string) - This is the middle name of the business owner.
-            _Optional_
         + lastName: `Ronald` (string) - This is the last name of the business owner.
-            _Mandatory_
         + email: `jamesr@email.com` (string) - This is the email address of the business owner.
-            _Mandatory_
         + Include Phone Number
-            _Mandatory_
 
 ## Date of Birth
 + `dateOfBirth` (object) : Details of the Date of birth.
     + Properties
         + day: `19` (string) - This is the day of the month.
-            _Mandatory_
         + month: `12` (string) - This is the month of the year.
-            _Mandatory_
         + year: `1990` (string) - This is the year.
-            _Mandatory_
 
 ## EFT Bank Account
 + `eftBankAccount` (object) : Details of the EFT Bank Account.
     + Properties
         + id: `e84fc1` (string) - This is the merchant's EFT bank account ID returned in the response.
-            _Read Only_
-        + accountNumber: `5807560412853954` (string) - This is the merchant's bank account number.
-            _Mandatory_
+        + accountNumber: `5807560412853954` (string, required) - This is the merchant's bank account number.
         + lastDigits: `3954` (string) - This is the last 4-digits of account number sent in response.
-            _Read Only_
-        + transitNumber: `52487` (string) - This is the 5-digit transit number of the merchant's bank branch.
-            _Mandatory_
-        + institutionId: `052` (string) - This is the 3-digit institution ID of the merchant's bank branch.
-            _Mandatory_
+        + transitNumber: `52487` (string, required) - This is the 5-digit transit number of the merchant's bank branch.
+        + institutionId: `052` (string, required) - This is the 3-digit institution ID of the merchant's bank branch.
         + paymentToken: `1123gdrdt6y` (string) - This is a token generated by Paysafe that represents the bank account.
-            _Optional_
 
 ## Phone Number
 + `phoneNumber` (object) : Details of the phone number.
     + Properties
-        + id: `ph-1111` (string) - This is the unique ID returned in the response. This ID can be used for future associated requests.
-            _Read Only_
+        + id: `ph-1111` (string) - This is the unique ID returned in the response after some delay. This ID can be used for future associated requests.
         + countryCode: `81` (string) - This is the country code of customer support phone number.
-            _Mandatory_
         + number: `466441111` (string) - This is the Customer support phone number.
-            _Mandatory_
 
 ## Principals
 + `principals` (object) : Array of Principals.
     + Properties
-        + id: `ph-1111` (string) - This is the unique ID returned in the response. This ID can be used for future associated requests.
-            _Read Only_
+        + id: `ph-1111` (string) - This is the unique ID returned in the response after some delay. This ID can be used for future associated requests.
         + isDirector: `false` (boolean) - This is the country code of customer support phone number.
-            _Optional_
         + isApplicant: `true` (boolean) - This is the Customer support phone number.
-            _Optional_
         + isControlProng: `false` (boolean) - This indicates whether this person is the Control Prong.
-            _Optional_
         + title: `MR` (string) - This indicates profession or marital status. Possile values are: MR, MRS, MS, Jr, Dr.
-            _Optional_
         + firstName: `466441111` (string) - This is the first name of the business owner.
-            _Optional_
         + middleName: `ph-1111` (string) - This is the middle name of the business owner.
-            _Optional_
         + lastName: `81` (string) - This is the last name of the business owner.
-            _Optional_
         + previousLastName: `Doe` (string) - This is the previous last name of the business owner. **Note:** This is used for European business owners only.
-            _Optional_
         + email: `acscv@email.com` (string) - This is the email address of the business owner.
-            _Optional_
         + Include Date of Birth
         + nationality: `466441111` (enum) - This is the nationality code of the business owner. **Note:** This is used for European business owners only.<br/> See [Nationality Codes](#nationalitycodes).
-            _Optional_
         + type: `466441111` (enum) - Possible values are: 
-            _Optional_
             + Members
                 + OWNER
                 + DIRECTOR
@@ -4878,87 +4826,52 @@ This is how you submit a merchant application request.
                 + SENIOR_MANAGER
                 + CONTROL_PRONG
         + ssn: `123456789` (string) - This is the Social Security Number of the person.
-            _Optional_
         + ssnLastFour: `6789` (string) - This is the last 4 digits of SSN sent in response.   
-            _Read Only_
         + sin: `466441111` (string) - This is the Social Insurance Number of the person.
-            _Optional_
         + sinLastFour: `1111` (string) - This is the last 4 digits of SIN sent in response.
-            _Read Only_
         + positionInCompany: `CEO` (string) - This is the position of the person in the company. 
-            _Optional_
         + percentageShareholding: `30` (string) - This is the percentage of ownership by the business owner.
-            _Optional_  
 
 
 ## SEPA Bank Account
 + `sepaBankAccount` (object) : Details of the SEPA Bank Account.
     + Properties
         + id: `e84fl1` (string) - This is the merchant's bank account ID returned by Paysafe that can be used later to look up or update that merchant bank account.
-            _Read Only_
-        + beneficiaryAccountName: `Main` (string) - This is the beneficiary's account name.
-            _Mandatory_
-        + swiftNumber: `85741236` (string) - This is the swift number of the merchant's bank account. Alphanumeric characters only.
-            _Mandatory_
-        + ibanNumber: `94001521002421` (string) - This is the IBAN of the merchant's bank account. Alphanumeric characters only.
-            _Mandatory_
+        + beneficiaryAccountName: `Main` (string, required) - This is the beneficiary's account name.
+        + swiftNumber: `85741236` (string, required) - This is the swift number of the merchant's bank account. Alphanumeric characters only.
+        + ibanNumber: `94001521002421` (string, required) - This is the IBAN of the merchant's bank account. Alphanumeric characters only.
         + lastDigits: `2421` (string) - This is the last 4-digits of account number sent in response.
-            _Read Only_
-        + beneficiaryBankCountry: `GB` (string) - This is the [country](#sepacountries) of the beneficiary bank's address.
-            _Mandatory_
+        + beneficiaryBankCountry: `GB` (string, required) - This is the [country](#sepacountries) of the beneficiary bank's address.
 
 ## User
 + `users` (object) - An array of user.
     + Properties 
-        + id: `user12` (string) - This is the unique ID returned in the response. This ID can be used for future associated requests.
-            _Read Only_
-        + email: `johnsmith@email.com` (string) - This is the email address that will be associated with the user.
-            _Mandatory_
-        + fullName: `John Smith` (string) - This is the full name of the user.
-            _Mandatory_
-        + loginName: `john_smith` (string) - This is the user that will be configured to access the merchant account in the Merchant Back Office.
-            _Mandatory_
-        + password: `Pwd1234!` (string) - This is the password that the user will use to access the merchant account in the Merchant Back Office.
-            _Mandatory_
+        + id: `user12` (string) - This is the unique ID returned in the response after some delay. This ID can be used for future associated requests.
+        + email: `johnsmith@email.com` (string, required) - This is the email address that will be associated with the user.
+        + fullName: `John Smith` (string, required) - This is the full name of the user.
+        + loginName: `john_smith` (string, required) - This is the user that will be configured to access the merchant account in the Merchant Back Office.
+        + password: `Pwd1234!` (string, required) - This is the password that the user will use to access the merchant account in the Merchant Back Office.
 
 ## Wire Bank Account
 + `wireBankAccount` (object) : Details of the Wire Bank Account.
     + Properties
         + id: `e84fm1` (string) - This is the merchant's wire bank account ID returned by Paysafe that can be used later to look up or update that merchant bank account.
-            _Read Only_
-        + accountNumber: `6358555211214` (string) - This is the merchant's bank account number.
-            _Mandatory_
+        + accountNumber: `6358555211214` (string, required) - This is the merchant's bank account number.
         + lastDigits: `1214` (string) - This is the last 4-digits of account number sent in response.
-            _Read Only_
-        + routingNumber: `1328514` (string) - This is the routing number or the bank code of the merchant's bank account.
-            _Optional_
-        + sortCode: `857412` (string) - This is the 6-digit sort code of the merchant's bank account. 
-            _Optional_
-        + swiftNumber: `85774412` (string) - This is the swift number of the merchant's bank account. Alphanumeric characters only.
-            _Mandatory_
-        + ibanNumber: `94001521002421` (string) - This is the IBAN  of the merchant's bank account. Alphanumeric characters only.**Note:** This field is required when *beneficiaryBankCountry* is  within our [SEPA supported countries list](#sepacountries).
-            _Optional_
-        + beneficiaryCountry: `GB` (string) - This is the [country](#countrycodes) of the beneficiary's address. 
-            _Mandatory_
-        + beneficiaryAccountName: `Main Account` (string) - This is the beneficiary's account name.
-            _Mandatory_
-        + beneficiaryAddress: `99 Spalding Green` (string) - This is the beneficiary's address.
-            _Mandatory_
-        + beneficiaryCity: `London` (string) - This is the beneficiary's city.
-            _Mandatory_
-        + beneficiaryRegion: `London` (string) - This is the beneficiary's region, state, or province.
-            _Mandatory_
-        + beneficiaryPostCode: `E15 1AA` (string) - This is the beneficiary's post code.
-            _Mandatory_
-        + beneficiaryBankCountry: `GB` (string) - This is the [country](#countrycodes) of the beneficiary bank's address.
-            _Mandatory_
-        + beneficiaryBankName: `First Royal` (string) - This is the name of the beneficiary's bank.
-            _Mandatory_
-        + beneficiaryBankAddress: `12 Field Rd.` (string) - This is the street of the beneficiary's bank address.
-            _Mandatory_
-        + beneficiaryBankCity: `London` (string) - This is the city of the beneficiary's bank.
-            _Mandatory_
-        + beneficiaryBankRegion: `London` (string) - This is the region, state, or province of the beneficiary's bank.
-            _Mandatory_
-        + beneficiaryBankPostCode: `A13 1BB` (string) - This is the post code of the beneficiary's bank.
-            _Mandatory_
+        + routingNumber: `1328514` (string, optional) - This is the routing number or the bank code of the merchant's bank account.
+        + sortCode: `857412` (string, optional) - This is the 6-digit sort code of the merchant's bank account. 
+        + swiftNumber: `85774412` (string, required) - This is the swift number of the merchant's bank account. Alphanumeric characters only.
+        + ibanNumber: `94001521002421` (string, optional) - This is the IBAN  of the merchant's bank account. Alphanumeric characters only.
+            **Note:** This field is required when *beneficiaryBankCountry* is  within our [SEPA supported countries list](#sepacountries).
+        + beneficiaryCountry: `GB` (string, required) - This is the [country](#countrycodes) of the beneficiary's address. 
+        + beneficiaryAccountName: `Main Account` (string, required) - This is the beneficiary's account name.
+        + beneficiaryAddress: `99 Spalding Green` (string, required) - This is the beneficiary's address.
+        + beneficiaryCity: `London` (string, required) - This is the beneficiary's city.
+        + beneficiaryRegion: `London` (string, required) - This is the beneficiary's region, state, or province.
+        + beneficiaryPostCode: `E15 1AA` (string, required) - This is the beneficiary's post code.
+        + beneficiaryBankCountry: `GB` (string, required) - This is the [country](#countrycodes) of the beneficiary bank's address.
+        + beneficiaryBankName: `First Royal` (string, required) - This is the name of the beneficiary's bank.
+        + beneficiaryBankAddress: `12 Field Rd.` (string, required) - This is the street of the beneficiary's bank address.
+        + beneficiaryBankCity: `London` (string, required) - This is the city of the beneficiary's bank.
+        + beneficiaryBankRegion: `London` (string, required) - This is the region, state, or province of the beneficiary's bank.
+        + beneficiaryBankPostCode: `A13 1BB` (string, required) - This is the post code of the beneficiary's bank.
